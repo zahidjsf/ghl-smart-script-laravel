@@ -93,7 +93,38 @@ class SmartRewardController extends Controller
         $location = Location::where('id', $id)->first();
 
         if ($actionType == 'custom_values') {
-        } elseif ($actionType == 'custom_values') {
+
+            $customValues = $this->getCustomValues( $location->loc_id);
+
+            if ($customValues && property_exists($customValues, 'customValues') ) {
+                return redirect()->back()->with('error', 'Could not retrieve Custom Values');
+            }
+
+            // Get custom value types through the collections relationship
+            $cvTypes = $location->customValueCollections()
+                ->with('customValues')
+                ->get()
+                ->pluck('customValues')
+                ->flatten()
+                ->sortBy('cv_order');
+            dd($cvTypes);
+            // Prepare inputs
+            $inputs = [];
+            foreach ($cvTypes as $cv) {
+                foreach ($customValues['customValues'] as $value) {
+                    if ($this->isMatchingCustomValue($cv, $value)) {
+                        $inputs[] = $this->formatInput($cv, $value, count($inputs));
+                        break;
+                    }
+                }
+            }
+
+            return view('custom-values.edit', [
+                'location' => $location,
+                'inputs' => $inputs,
+                'msg' => request()->get('msg', '')
+            ]);
+
             # code...
         } elseif ($actionType == 'edit_details') {
             $view = view('frontpanel.smartreward.editdetails', get_defined_vars())->render();
@@ -117,6 +148,15 @@ class SmartRewardController extends Controller
         dd($id, $actionType);
     }
 
+     private function getCustomValues($locId)
+    {
+        if ($locId) {
+            $url = 'locations/'.$locId.'/customValues';
+            $response = CRM::crmV2(auth()->user()->id, $url,  'get', '', [], false, $locId);
+            $response = json_encode($response);
+            return $response;
+        }
+    }
     public function settingUpdate(Request $request)
     {
 
@@ -262,7 +302,7 @@ class SmartRewardController extends Controller
             $agencyLocations[$loc->id] = $loc;
         }
 
-        $projectId =  request('project_id', 2);
+        $projectId =  request('proj_id', 2);
         // $projectId =  request('project_id', 1);
         // $showLocationSelect = $account->is_agency;
         $showLocationSelect = true;
@@ -318,7 +358,7 @@ class SmartRewardController extends Controller
         // Handle project-specific setup
         $this->handleProjectSetup($account, $validated, $location);
 
-        return redirect()->route('locations.index')
+        return redirect()->back()
             ->with('success', 'Location added successfully');
     }
 
@@ -368,8 +408,8 @@ class SmartRewardController extends Controller
     protected function createLocationRecord($account, $validated, $locationId, $details)
     {
         $location = new Location();
-        $location->account_id = $account->id;
-        $location->project_id = $validated['project_id'];
+        $location->a_id = $account->id;
+        $location->proj_id = $validated['project_id'];
         $location->loc_id = $locationId;
         $location->name = $details['name'] ?? '';
         $location->website = $details['website'] ?? '';
@@ -384,7 +424,7 @@ class SmartRewardController extends Controller
         $location->postalcode = $details['postalcode'] ?? '';
         $location->timezone = $details['timezone'] ?? '';
         // $location->apikey = Crypt::encryptString($details['apikey']);
-        $location->is_ml = $validated['ml'] ?? 'no';
+        $location->isML = $validated['ml'] ?? 'no';
         $location->snapshot = $validated['snapshot'] ?? null;
 
         $location->save();
@@ -416,62 +456,62 @@ class SmartRewardController extends Controller
     protected function setupRewardsProject($account, $validated, $location)
     {
         // Create default settings
-        LocationSetting::create([
-            'location_id' => $location->id,
-            'settings' => json_encode([
-                'showSettings' => "yes",
-                'showRewards' => "yes",
-                'showPoints' => "yes",
-                'showPromotions' => "yes",
-                'use_loyalty' => "yes",
-                'showTiers' => "yes",
-                'pointsName' => "Points",
-                'showReporting' => "yes",
-                'pointsValue' => 1,
-                'language' => "english"
-            ])
+        $locationSetting = new LocationSetting();
+        $locationSetting->loc_id = $location->id;
+        $locationSetting->settings = json_encode([
+            'showSettings'   => "yes",
+            'showRewards'    => "yes",
+            'showPoints'     => "yes",
+            'showPromotions' => "yes",
+            'use_loyalty'    => "yes",
+            'showTiers'      => "yes",
+            'pointsName'     => "Points",
+            'showReporting'  => "yes",
+            'pointsValue'    => 1,
+            'language'       => "english"
         ]);
+        $locationSetting->save();
 
         // Add to promotions if selected
-        if (($validated['add_promo_loc'] ?? 'no') === 'yes') {
-            $this->duplicateLocationForProject($account, $location, 15);
-        }
+        // if (($validated['add_promo_loc'] ?? 'no') === 'yes') {
+        //     $this->duplicateLocationForProject($account, $location, 15);
+        // }
 
         // Add to loyalty if selected
-        if (($validated['add_loyalty_loc'] ?? 'no') === 'yes') {
-            $this->duplicateLocationForProject($account, $location, 17);
-        }
+        // if (($validated['add_loyalty_loc'] ?? 'no') === 'yes') {
+        //     $this->duplicateLocationForProject($account, $location, 17);
+        // }
     }
 
 
     protected function duplicateLocationForProject($account, $originalLocation, $projectId)
     {
         // Check if already exists
-        if (!Location::where('account_id', $account->id)
-            ->where('project_id', $projectId)
+        if (!Location::where('a_id', $account->id)
+            ->where('proj_id', $projectId)
             ->where('loc_id', $originalLocation->loc_id)
             ->exists()) {
 
-            Location::create([
-                'account_id' => $account->id,
-                'project_id' => $projectId,
-                'loc_id' => $originalLocation->loc_id,
-                'name' => $originalLocation->name,
-                'website' => $originalLocation->website,
-                'firstname' => $originalLocation->firstname,
-                'lastname' => $originalLocation->lastname,
-                'email' => $originalLocation->email,
-                'phone' => $originalLocation->phone,
-                'address' => $originalLocation->address,
-                'city' => $originalLocation->city,
-                'state' => $originalLocation->state,
-                'country' => $originalLocation->country,
-                'postalcode' => $originalLocation->postalcode,
-                'timezone' => $originalLocation->timezone,
-                'apikey' => $originalLocation->apikey,
-                'is_ml' => $originalLocation->is_ml,
-                'snapshot' => $originalLocation->snapshot
-            ]);
+            $location = new Location();
+            $location->a_id        = $account->id;
+            $location->proj_id     = $projectId;
+            $location->loc_id      = $originalLocation->loc_id;
+            $location->name        = $originalLocation->name;
+            $location->website     = $originalLocation->website;
+            $location->firstname   = $originalLocation->firstname;
+            $location->lastname    = $originalLocation->lastname;
+            $location->email       = $originalLocation->email;
+            $location->phone       = $originalLocation->phone;
+            $location->address     = $originalLocation->address;
+            $location->city        = $originalLocation->city;
+            $location->state       = $originalLocation->state;
+            $location->country     = $originalLocation->country;
+            $location->postalcode  = $originalLocation->postalcode;
+            $location->timezone    = $originalLocation->timezone;
+            $location->apikey      = $originalLocation->apikey;
+            $location->isML       = $originalLocation->is_ml;
+            $location->snapshot    = $originalLocation->snapshot;
+            $location->save();
         }
     }
 }
