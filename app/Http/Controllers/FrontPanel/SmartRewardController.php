@@ -94,12 +94,15 @@ class SmartRewardController extends Controller
 
         if ($actionType == 'custom_values') {
 
-            $customValues = $this->getCustomValues( $location->loc_id);
+            $customValues = $this->getCustomValues($location->loc_id);
+            $customValues = json_encode($customValues);
 
-            if ($customValues && property_exists($customValues, 'customValues') ) {
+            // dd($customValues->customValues);
+            if ($customValues && property_exists($customValues, 'customValues')) {
+                dd('hhhhh');
                 return redirect()->back()->with('error', 'Could not retrieve Custom Values');
             }
-
+            // dd($customValues);
             // Get custom value types through the collections relationship
             $cvTypes = $location->customValueCollections()
                 ->with('customValues')
@@ -107,18 +110,20 @@ class SmartRewardController extends Controller
                 ->pluck('customValues')
                 ->flatten()
                 ->sortBy('cv_order');
-            dd($cvTypes);
             // Prepare inputs
+            // dd($cvTypes);
             $inputs = [];
             foreach ($cvTypes as $cv) {
-                foreach ($customValues['customValues'] as $value) {
+                foreach ($customValues->customValues as $value) {
+
                     if ($this->isMatchingCustomValue($cv, $value)) {
                         $inputs[] = $this->formatInput($cv, $value, count($inputs));
                         break;
                     }
+
                 }
             }
-
+            dd($inputs);
             return view('custom-values.edit', [
                 'location' => $location,
                 'inputs' => $inputs,
@@ -148,12 +153,18 @@ class SmartRewardController extends Controller
         dd($id, $actionType);
     }
 
-     private function getCustomValues($locId)
+       private function isMatchingCustomValue($cv, $value)
+    {
+        return $value['name'] == $cv->name ||
+               str_replace(' ', '', $value['fieldKey']) == str_replace(' ', '', $cv->mergeKey);
+    }
+
+
+    private function getCustomValues($locId)
     {
         if ($locId) {
-            $url = 'locations/'.$locId.'/customValues';
+            $url = 'locations/' . $locId . '/customValues';
             $response = CRM::crmV2(auth()->user()->id, $url,  'get', '', [], false, $locId);
-            $response = json_encode($response);
             return $response;
         }
     }
