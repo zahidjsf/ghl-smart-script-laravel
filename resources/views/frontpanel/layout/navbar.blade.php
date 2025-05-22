@@ -25,7 +25,7 @@
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
                             <a href="{{ route('frontend.smart_reward.index') }}" class="dropdown-item" key="t-default">Smart Rewards</a>
-                            <a href="dashboard-saas.html" class="dropdown-item" key="t-saas">Saas</a>
+                            <a href="{{ route('frontend.smart_reward.cvcupdater') }}" class="dropdown-item" key="t-saas">Custom Value Updater</a>
                             <a href="dashboard-crypto.html" class="dropdown-item" key="t-crypto">Crypto</a>
                             <a href="dashboard-blog.html" class="dropdown-item" key="t-blog">Blog</a>
                         </div>

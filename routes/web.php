@@ -12,6 +12,7 @@ use App\Http\Controllers\FrontPanel\SmartRewardController;
 use App\Http\Controllers\AdminPanel\Auth\CustomAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CRMConnectionController;
+use App\Http\Controllers\FrontPanel\CustomValueController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -124,6 +125,18 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
 
         Route::get('add-locations', [SmartRewardController::class, 'addLocations'])->name('addlocations');
         Route::post('location-add', [SmartRewardController::class, 'locationAdd'])->name('locationAdd');
+
+        Route::get('cv-updater', [CustomValueController::class, 'cvUpdater'])->name('cvcupdater');
+        Route::get('get-collections', [CustomValueController::class, 'getCollections'])->name('getcollections');
+
+
+        Route::get('edit-collection/{id}', [CustomValueController::class, 'editCollection'])->name('editcollection');
+        Route::get('add-collection', [CustomValueController::class, 'addCollection'])->name('addcollection');
+        Route::get('copy-collection/{id}', [CustomValueController::class, 'copyCollection'])->name('copycollection');
+        Route::get('remove-collection/{id}', [CustomValueController::class, 'removeCollection'])->name('removecollection');
+
+
+
 
     });
 
