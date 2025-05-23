@@ -12,11 +12,14 @@
     </div>
     <hr>
 
-    
+
     <div class="d-flex justify-content-between align-items-center">
         <h5 class="mb-0">Custom Value Collections</h5>
         <a href="{{ route('frontend.smart_reward.addcollection') }}" class="btn btn-success mb-2">+ Create New Collection</a>
     </div>
+
+     <div class="alert alert-success" id="success-msg" hidden></div>
+     <div class="alert alert-danger" id="error-msg" hidden></div>
 
     @if (session('success'))
     <div class="alert alert-success">
@@ -60,6 +63,7 @@
         </div>
     </div>
 
+    <div id="duplicateLocation-modal"></div>
 
 </div>
 @endsection
@@ -94,5 +98,89 @@
         });
 
     });
+
+      $(document).on('click', '.duplicate-collection', function(e) {
+
+            e.preventDefault();
+            let url = $(this).data('url');
+
+            $.ajax({
+                url: url,
+                method: 'GET',
+                success: function(response) {
+                    // Inject the modal content
+                    $('#duplicateLocation-modal').html(response.view);
+
+                    // Show the modal
+                    $('#duplicateLocationModal').modal('show');
+                },
+                error: function(xhr) {
+                    alert('Error loading modal content');
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+
+                $(document).on('click', '.remove-collection', function(e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "This action cannot be undone!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+
+                    let url = $(this).data('url');
+
+                    $.ajax({
+                        url: url,
+                        method: 'GET',
+                        success: function(response) {
+                            if (response.status == 'success') {
+
+                                var table = $('#collections-table').DataTable();
+                                table.draw();
+
+                                var msg = document.getElementById("success-msg");
+                                msg.removeAttribute('hidden');
+                                msg.innerText = response.message;
+
+                            }else{
+                                var msg = document.getElementById("error-msg");
+                                msg.removeAttribute('hidden');
+                                msg.innerText = response.message;
+                            }
+
+                        },
+                        error: function(xhr) {
+                            alert('Error loading modal content');
+                            console.error(xhr.responseText);
+                        }
+                    });
+
+
+
+
+                }
+            });
+
+
+
+
+        });
+
+
+
+
+
+
+
+
 </script>
 @endsection

@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\FrontPanel;
 
 use App\Http\Controllers\Controller;
+use App\Models\CollectionAssign;
+use App\Models\CustomValue;
 use App\Models\CustomValueCollection;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomValueController extends Controller
 {
@@ -25,10 +28,9 @@ class CustomValueController extends Controller
             ->addColumn('action', function ($row) {
 
                 $html = '<a href="' . route('frontend.smart_reward.editcollection', ['id' => $row->id]) . '" class="btn btn-sm btn-primary">Edit Collection</a> ';
-                $html .= '<a href="' . route('frontend.smart_reward.copycollection', ['id' => $row->id]) . '" class="btn btn-sm btn-success">Copy</a> ';
-
-                if ($row->locked == 'yes') {
-                    $html .= '<a href="' . route('frontend.smart_reward.removecollection', ['id' => $row->id]) . '" class="btn btn-sm btn-danger">Remove</a> ';
+                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.copycollection', ['id' => $row->id]) . '" class="btn btn-sm btn-success duplicate-collection">Copy</a>';
+                if ($row->locked !== 'yes') {
+                    $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.removecollection', ['id' => $row->id]) . '" class="btn btn-sm btn-danger remove-collection">Remove</a>';
                 }
 
                 return $html;
@@ -40,7 +42,7 @@ class CustomValueController extends Controller
 
     public function addcollection()
     {
-
+        dd('fdsfsdf');
         $locationId = $request->input('id');
         $cfLocationId = $request->input('cf_loc');
 
@@ -80,7 +82,67 @@ class CustomValueController extends Controller
         dd($id);
     }
 
-    public function copyCollection($id) {}
+    public function copyCollection($id)
+    {
+        $collection = CustomValueCollection::find($id);
+        $view = view('frontpanel.cvupdateer.copy-collection', get_defined_vars())->render();
+        return response()->json(['view' => $view]);
+    }
 
-    public function removeCollection($id) {}
+    public function duplicateCollection(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'col' => 'required|exists:customvaluecollections,id',
+        ]);
+        try {
+
+            DB::beginTransaction();
+            $originalCollection = CustomValueCollection::findOrFail($request->col);
+            $newCollection = $originalCollection->replicate();
+            $newCollection->name = $request->name;
+            $newCollection->description = $request->col_desc ?? $originalCollection->description;
+            $newCollection->save();
+            $originalValues = CustomValue::where('col_id', $originalCollection->id)->get();
+            foreach ($originalValues as $value) {
+                $newValue = $value->replicate();
+                $newValue->col_id = $newCollection->id;
+                $newValue->save();
+            }
+
+            $collectionAssign = new CollectionAssign();
+            $collectionAssign->loc_id = $originalCollection->orig_loc_id;
+            $collectionAssign->col_id =$newCollection->id;
+            $collectionAssign->a_id = $originalCollection->a_id;
+            $collectionAssign->proj_id = 2;
+            $collectionAssign->save();
+
+            DB::commit();
+            return redirect()->back()->with('success', 'Collection duplicated successfully!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to duplicate collection: ' . $e->getMessage());
+        }
+    }
+
+    public function removeCollection($collectionId)
+    {
+        try {
+            DB::beginTransaction();
+            $collection = CustomValueCollection::findOrFail($collectionId);
+            if ($collection->locked === 'yes') {
+                return response()->json(['status' => 'error', 'message' => 'This collection is locked and cannot be removed.']);
+            }
+            CustomValue::where('col_id', $collectionId)->delete();
+            CollectionAssign::where('col_id', $collectionId)->delete();
+            DB::table('collection_assign')->where('col_id', $collectionId)->delete();
+            $collection->delete();
+            DB::commit();
+            return response()->json(['status' => 'success', 'message' => 'Collection removed successfully!']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return redirect()->back()->with('error', 'Failed to remove collection: ' . $e->getMessage());
+        }
+    }
+    
 }

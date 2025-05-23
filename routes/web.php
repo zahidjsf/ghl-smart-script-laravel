@@ -133,6 +133,7 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
         Route::get('edit-collection/{id}', [CustomValueController::class, 'editCollection'])->name('editcollection');
         Route::get('add-collection', [CustomValueController::class, 'addCollection'])->name('addcollection');
         Route::get('copy-collection/{id}', [CustomValueController::class, 'copyCollection'])->name('copycollection');
+        Route::post('copy-collection-save', [CustomValueController::class, 'duplicateCollection'])->name('duplicatecollection');
         Route::get('remove-collection/{id}', [CustomValueController::class, 'removeCollection'])->name('removecollection');
 
 
