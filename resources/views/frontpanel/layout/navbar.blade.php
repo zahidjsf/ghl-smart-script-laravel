@@ -21,7 +21,7 @@
 
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle arrow-none @yield('smart_apps')" href="#" id="topnav-dashboard" role="button">
-                            <i class="bx bx-home-circle me-2"></i><span key="t-dashboards">SMART Apps</span> <div class="arrow-down"></div>
+                            <span key="t-dashboards">SMART Apps</span> <div class="arrow-down"></div>
                         </a>
                         <div class="dropdown-menu" aria-labelledby="topnav-dashboard">
                             <a href="{{ route('frontend.smart_reward.index') }}" class="dropdown-item" key="t-default">Smart Rewards</a>
