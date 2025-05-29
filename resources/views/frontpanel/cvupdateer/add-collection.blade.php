@@ -44,23 +44,24 @@
                 <select id='locations' name='locations' class="form-control">
                     <option value="">Select A Location</option>
                     @foreach ($agencyLocations as $location)
-                    <option value="{{ $location->id }}">{{ $location->name }}</option>
+                    <option data-user-id="{{$location->a_id}}" data-location-id="{{$location->loc_id}}" value="{{ $location->id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="form-group col-md-6">
                 <label for='cf_loc'>Grab Custom Fields From Another Location</label><br />
                 <select id='cf_loc' name='cf_loc' class="form-control">
-                    <option value="">Select A Location</option>
+                    <option data-cf-location-id="0" value="0" selected >Same Location As Custom Values Above</option>
                     @foreach ($agencyLocations as $location)
-                    <option value="{{ $location->id }}">{{ $location->name }}</option>
+                    <option data-cf-location-id="{{$location->loc_id}}" value="{{ $location->id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
+                Select the location where you will have your client fill out the form to update the custom values.
             </div>
         </div>
         <br>
         <div class="form-group text-end" id="getFieldsBtnWrapper" hidden>
-            <a class="btn btn-primary" id="get-custom-fields">Get Custom Fields</a>
+            <a class="btn btn-primary" id="get-custom-values">Get Custom Values</a>
         </div>
         <div class="form-group">
             <label for="col_name">Collection Name</label>
@@ -72,6 +73,7 @@
             <textarea name="col_desc" id="textarea" class="form-control" rows="3"></textarea>
         </div>
         <br>
+        <div id="customValuesContainer"></div>
         <div class="modal-footer">
             <button type="submit" name="insert" class="btn btn-primary add-location">Save
                 changes</button>
@@ -84,33 +86,43 @@
 
 @section('js-script-add')
 <script>
-    const locationSelect = document.getElementById('locations');
-    const cfLocSelect = document.getElementById('cf_loc');
-    const buttonWrapper = document.getElementById('getFieldsBtnWrapper');
+    document.addEventListener("DOMContentLoaded", function() {
+        const locationSelect = document.getElementById('locations');
+        const getFieldsBtnWrapper = document.getElementById('getFieldsBtnWrapper');
 
-    function toggleButtonVisibility() {
-        const locValue = locationSelect.value;
-        const cfLocValue = cfLocSelect.value;
-        if (locValue && cfLocValue && locValue !== cfLocValue) {
-            buttonWrapper.hidden = false;
-        } else {
-            buttonWrapper.hidden = true;
+        function toggleButtonVisibility() {
+            const locationSelected = locationSelect.value.trim() !== "";
+            getFieldsBtnWrapper.hidden = !(locationSelected);
         }
-    }
-
-    function preventSameSelection(changedSelect, otherSelect) {
-        const selectedValue = changedSelect.value;
-        for (let option of otherSelect.options) {
-            option.disabled = (option.value === selectedValue && selectedValue !== "");
-        }
-    }
-    locationSelect.addEventListener('change', () => {
-        preventSameSelection(locationSelect, cfLocSelect);
-        toggleButtonVisibility();
+        locationSelect.addEventListener('change', toggleButtonVisibility);
+        // cfLocSelect.addEventListener('change', toggleButtonVisibility);
     });
-    cfLocSelect.addEventListener('change', () => {
-        preventSameSelection(cfLocSelect, locationSelect);
-        toggleButtonVisibility();
+    $(document).ready(function() {
+        $('#get-custom-values').on('click', function() {
+            var selectedOption = $('#locations option:selected'); // Get selected <option>
+            var cfSelectedOption = $('#cf_loc option:selected'); // Get selected <option>
+            var locationId = selectedOption.data('location-id');
+            var cfLocationId = cfSelectedOption.data('cf-location-id');
+            if(cfLocationId == 0 )
+            {
+                cfLocationId = locationId;
+            }
+            var userId = selectedOption.data('user-id');
+
+            console.log('Location ID:', locationId);
+            console.log('User ID:', userId);
+            var url = '{{ url("smart-reward/get-customvalues") }}/' + locationId + '?user_id=' + userId+'&cf_location_id='+cfLocationId;
+            $.ajax({
+                url:url,
+                method: 'GET',
+                success: function(response) {
+                    $('#customValuesContainer').html(response);
+                },
+                error: function() {
+                    alert('Failed to load custom fields.');
+                }
+            });
+        });
     });
 </script>
 @endsection
