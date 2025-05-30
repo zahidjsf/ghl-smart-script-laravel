@@ -71,15 +71,12 @@ $c = 0;
         return strcmp($a->name, $b->name);
         });
 
+        $fields .= "<option value='Add Stamps'>Add Stapms</option>";
         foreach ($cf as $cfItem) {
         // Safety check in case of unexpected structure
         if (!is_object($cfItem) || !isset($cfItem->name)) {
         continue;
         }
-
-        $fields .= "<option value='Add Stamps'>Add Stapms</option>";
-
-
         $cfSelected = (trim($cfItem->name) === trim($customField)) ? 'selected' : '';
         $fields .= '<option value="' . e($cfItem->name) . '" ' . $cfSelected . '>' . e($cfItem->name) . '</option>';
         }
@@ -89,7 +86,6 @@ $c = 0;
         <tr style="{{ $color }}">
             <td>
                 <input type="checkbox" value="{{ $cvValue->id }}" name="cv[{{ $i }}][select]" id="select_{{ $i }}" {{ $selected }}>
-
             </td>
 
             <td style="max-width:300px;">
@@ -105,12 +101,11 @@ $c = 0;
                         <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="This is the form field from your location that will update the custom value when updating via webhook."></i>
                     </label>
                     <select style="margin-left:15px;" name="cv[{{ $i }}][customField]" id="customField_{{ $i }}"
-                            data-index="{{ $i }}"
-                            onchange="selectRow(this); autoCheck(this);"
-                            onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">
+                        data-index="{{ $i }}"
+                        onchange="autoCheck(this);"
+                        onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">
                         {!! $fields !!}
                     </select>
-
                 </div>
             </td>
 
@@ -126,12 +121,16 @@ $c = 0;
             <td style="padding-top:25px;">
                 <div class="form-group">
                     <label for="tooltip_{{ $i }}">Tool Tip</label>
-                    <textarea rows="5" style="width:100%;" name="cv[{{ $i }}][tooltip]" id="tooltip_{{ $i }}" onchange="selectRow(this);"
+                    <textarea rows="5" style="width:100%;" name="cv[{{ $i }}][tooltip]" id="tooltip_{{ $i }}"
+                        data-index="{{ $i }}"
+                        onchange="autoCheck(this);"
                         onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{ $tooltip }}</textarea>
                 </div>
                 <div class="form-group">
                     <label for="defaultv_{{ $i }}">Default Value</label>
-                    <textarea rows="5" style="width:100%;" name="cv[{{ $i }}][defaultv]" id="defaultv_{{ $i }}" onchange="selectRow(this);"
+                    <textarea rows="5" style="width:100%;" name="cv[{{ $i }}][defaultv]" id="defaultv_{{ $i }}"
+                        data-index="{{ $i }}"
+                        onchange="autoCheck(this);"
                         onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{ $default }}</textarea>
                 </div>
             </td>
@@ -141,7 +140,9 @@ $c = 0;
                     <label for="fieldtype_{{ $i }}">Field Type
                         <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="Field type allows you to set the data type of the field."></i>
                     </label>
-                    <select style="width:100%;" name="cv[{{ $i }}][fieldType]" id="fieldType_{{ $i }}" onchange="selectRow(this);"
+                    <select style="width:100%;" name="cv[{{ $i }}][fieldType]" id="fieldType_{{ $i }}"
+                        data-index="{{ $i }}"
+                        onchange="autoCheck(this);"
                         onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">
                         <option value="text" {{ $ftText }}>Text</option>
                         <option value="boolean" {{ $ftBoolean }}>YES/NO</option>
@@ -159,7 +160,10 @@ $c = 0;
                     <br /><span class="small">WYSIWYG on Paragraphs Only</span>
                     <hr style="margin:5px auto;">
                     <label for="sort_order_{{ $i }}">Display Order</label>
-                    <input type="text" name="cv[{{ $i }}][sort_order]" size="4" value="{{ $sort }}" />
+                    <input type="text" name="cv[{{ $i }}][sort_order]" size="4" value="{{ $sort }}"
+                        data-index="{{ $i }}"
+                        onchange="autoCheck(this);"
+                        onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
                     <br /><small>Used when using the Power Tools Custom Values Updater Form</small>
                 </div>
             </td>
@@ -168,7 +172,9 @@ $c = 0;
                 <label for="resource_{{ $i }}">Resources
                     <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="Provide your end user with additional resource links, templates, or downloads"></i>
                 </label>
-                <textarea style="width:100%;" rows="5" name="cv[{{ $i }}][resource]" id="resource_{{ $i }}" onchange="selectRow(this);"
+                <textarea style="width:100%;" rows="5" name="cv[{{ $i }}][resource]" id="resource_{{ $i }}"
+                    data-index="{{ $i }}"
+                    onchange="autoCheck(this);"
                     onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{ $resource }}</textarea>
             </td>
         </tr>
@@ -178,13 +184,13 @@ $c = 0;
     </tbody>
 </table>
 <script>
-
-    function autoCheck(selectEl) {
-        alert('ffff');
-        const index = selectEl.dataset.index;
-        const checkbox = document.getElementById('select_' + index);
-        if (selectEl.value !== '') {
-            checkbox.checked = true;
+    function autoCheck(element) {
+        const index = element.dataset.index;
+        if (index) {
+            const checkbox = document.getElementById('select_' + index);
+            if (checkbox && element.value !== '') {
+                checkbox.checked = true;
+            }
         }
     }
 

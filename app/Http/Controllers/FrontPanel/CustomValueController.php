@@ -16,7 +16,7 @@ class CustomValueController extends Controller
 {
     public function cvUpdater()
     {
-        return view('frontpanel.cvupdateer.index');
+        return view('frontpanel.cvupdater.index');
     }
 
     public function getCollections()
@@ -47,23 +47,72 @@ class CustomValueController extends Controller
         $authUser = auth()->user();
         $a_id = $authUser->id;
         $agencyLocations = Location::where('a_id', $a_id)->get();
-        return view('frontpanel.cvupdateer.add-collection', get_defined_vars());
+        return view('frontpanel.cvupdater.add-collection', get_defined_vars());
     }
 
     public function createCollection(Request $request)
     {
-        dd($request->all());
-        return;
+        $request->validate([
+            'collection_name' => 'required',
+            'collection_description' => 'required',
+            'locations' => 'required'
+        ]);
+        if (empty($request->cv)) {
+            return back()->with('error', 'No Custom Value is selected');
+        }
+        try {
+            DB::beginTransaction();
+            $parts = explode('|', $request->locations);
+            $orig_loc_id = $parts[0] ?? '';
+            $secondValue = $parts[1] ?? '';
+            $cf_loc = $request->cf_loc;
+            if ($cf_loc == 0) {
+                $cf_loc = $secondValue;
+            }
+            $collection = new CustomValueCollection();
+            $collection->a_id = auth()->user()->id;
+            $collection->orig_loc_id = $orig_loc_id;
+            $collection->cf_loc_id = $cf_loc;
+            $collection->name = $request->collection_name;
+            $collection->description = $request->collection_description;
+            $collection->save();
+
+            foreach ($request->cv as $index => $cvData) {
+                if (isset($cvData['select'])) {
+                    $customValue = new CustomValue();
+                    $customValue->a_id = auth()->user()->id;
+                    $customValue->col_id = $collection->id;
+                    $customValue->name = str_replace('"', '', $cvData['name'] ?? '');
+                    $customValue->mergeKey = $cvData['fieldKey'] ?? '';
+                    $customValue->fieldType = $cvData['fieldType'] ?? '';
+                    $customValue->tooltip = $cvData['tooltip'] ?? '';
+                    $customValue->cvaction = ($cvData['readonly'] ?? false) ? 'readonly' : '';
+                    $customValue->cvattribute = ($cvData['wysiwyg'] ?? false) ? 'wysiwyg' : '';
+                    $customValue->custom_field = $cvData['customField'] ?? '';
+                    $customValue->resources = $cvData['resource'] ?? '';
+                    $customValue->cv_order = $cvData['sort_order'] ?? 0;
+                    $customValue->defaultv = $cvData['defaultv'] ?? null;
+                    $customValue->save();
+                }
+            }
+
+            DB::commit();
+            $msg = "Collection Created & Custom Values Added";
+            return back()->with('success', $msg);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', urlencode($e->getMessage()));
+        }
     }
     public function getCustomValue(Request $request, $location_id)
     {
         $user_id = $request->user_id;
         $cf_location_id = $request->cf_location_id;
-        $url = 'locations/'.$location_id.'/customValues';
-        $cv = CRM::crmV2($user_id, $url,  'get', '', [], false,$location_id);
-        $url1 = 'locations/'.$cf_location_id.'/customFields';
-        $cf = CRM::crmV2($user_id, $url1,  'get', '', [], false,$cf_location_id);
-        return view('frontpanel.cvupdateer.get-cv-table-data', [
+        $url = 'locations/' . $location_id . '/customValues';
+        $cv = CRM::crmV2($user_id, $url,  'get', '', [], false, $location_id);
+        $url1 = 'locations/' . $cf_location_id . '/customFields';
+        $cf = CRM::crmV2($user_id, $url1,  'get', '', [], false, $cf_location_id);
+        return view('frontpanel.cvupdater.get-cv-table-data', [
             'cv' => $cv->customValues,
             'cf' => $cf->customFields
         ])->render();
@@ -71,13 +120,131 @@ class CustomValueController extends Controller
 
     public function editCollection($id)
     {
-        dd($id);
+        $authUser = auth()->user();
+        $a_id = $authUser->id;
+        $collection = CustomValueCollection::where('a_id', $a_id)->findOrFail($id);
+        $agencyLocations = Location::where('a_id', $a_id)->get();
+        return view('frontpanel.cvupdater.edit-collection', get_defined_vars());
+    }
+
+    public function updateCollectionCustomValues(Request $request)
+    {
+        $request->validate([
+            'location_id' => 'required',
+            'cf_location_id' => 'required',
+            'collection_id' => 'required'
+        ]);
+
+        $user_id = auth()->user()->id;
+        $location_id = $request->location_id;
+        $cf_location_id = $request->cf_location_id;
+        $collection_id = $request->collection_id;
+
+        try {
+            // Get all custom values from the selected location
+            $url = 'locations/' . $location_id . '/customValues';
+            $cvResponse = CRM::crmV2($user_id, $url, 'get', '', [], false, $location_id);
+            $allCustomValues = $cvResponse->customValues ?? [];
+
+            // Get custom fields from the target location
+            $url = 'locations/' . $cf_location_id . '/customFields';
+            $cfResponse = CRM::crmV2($user_id, $url, 'get', '', [], false, $cf_location_id);
+            $customFields = $cfResponse->customFields ?? [];
+
+            // Get existing custom values for this collection
+            $collection = CustomValueCollection::with('customValues')->find($collection_id);
+            $dbCustomValues = $collection ? $collection->customValues->toArray() : [];
+
+            return response()->json([
+                'success' => true,
+                'html' => view('frontpanel.cvupdater.update-cv-table-data', [
+                    'cv' => [
+                        'customValues' => $allCustomValues,
+                        'db' => $dbCustomValues
+                    ],
+                    'cf' => $customFields
+                ])->render()
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load custom values: ' . $e->getMessage()
+            ]);
+        }
+    }
+
+    public function updateCollection(Request $request, $id)
+    {
+        $request->validate([
+            'collection_name' => 'required',
+            'collection_description' => 'required',
+            'locations' => 'required'
+        ]);
+
+        if (empty($request->cv)) {
+            return back()->with('error', 'No Custom Value is selected');
+        }
+        try {
+            DB::beginTransaction();
+
+            $parts = explode('|', $request->locations);
+            $orig_loc_id = $parts[0] ?? '';
+            $secondValue = $parts[1] ?? '';
+            $cf_loc = $request->cf_loc;
+            if ($cf_loc == 0) {
+                $cf_loc = $secondValue;
+            }
+            // Update the collection
+            $collection = CustomValueCollection::where('a_id', auth()->user()->id)->findOrFail($id);
+            $collection->orig_loc_id = $orig_loc_id;
+            $collection->cf_loc_id = $cf_loc;
+            $collection->name = $request->collection_name;
+            $collection->description = $request->collection_description;
+            $collection->save();
+
+            // Process each submitted custom value
+            foreach ($request->cv as $index => $cvData) {
+                if (isset($cvData['select'])) {
+                    // Check if this is an existing custom value (has cv_id)
+                    if (!empty($cvData['cv_id'])) {
+                        $customValue = CustomValue::where('col_id', $collection->id)
+                            ->find($cvData['cv_id']);
+                    }
+
+                    // If not found or new custom value
+                    if (empty($customValue)) {
+                        $customValue = new CustomValue();
+                        $customValue->a_id = auth()->user()->id;
+                        $customValue->col_id = $collection->id;
+                    }
+
+                    $customValue->name = str_replace('"', '', $cvData['name'] ?? '');
+                    $customValue->mergeKey = $cvData['fieldKey'] ?? '';
+                    $customValue->fieldType = $cvData['fieldType'] ?? '';
+                    $customValue->tooltip = $cvData['tooltip'] ?? '';
+                    $customValue->cvaction = ($cvData['readonly'] ?? false) ? 'readonly' : '';
+                    $customValue->cvattribute = ($cvData['wysiwyg'] ?? false) ? 'wysiwyg' : '';
+                    $customValue->custom_field = $cvData['customField'] ?? '';
+                    $customValue->resources = $cvData['resource'] ?? '';
+                    $customValue->cv_order = $cvData['sort_order'] ?? 0;
+                    $customValue->defaultv = $cvData['defaultv'] ?? null;
+                    $customValue->save();
+                }
+            }
+
+            DB::commit();
+            $msg = "Collection Updated Successfully";
+            return back()->with('success', $msg);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', urlencode($e->getMessage()));
+        }
     }
 
     public function copyCollection($id)
     {
         $collection = CustomValueCollection::find($id);
-        $view = view('frontpanel.cvupdateer.copy-collection', get_defined_vars())->render();
+        $view = view('frontpanel.cvupdater.copy-collection', get_defined_vars())->render();
         return response()->json(['view' => $view]);
     }
 

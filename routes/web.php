@@ -137,7 +137,8 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
         Route::get('remove-collection/{id}', [CustomValueController::class, 'removeCollection'])->name('removecollection');
         Route::post('create-collection', [CustomValueController::class, 'createCollection'])->name('createcollection');
         Route::get('get-customvalues/{id}', [CustomValueController::class, 'getCustomValue'])->name('getcustomvalue');
-
+        Route::post('update-collection-customvalues', [CustomValueController::class, 'updateCollectionCustomValues'])->name('updatecollectioncustomvalues');
+          Route::post('updatecollection/{id}', [CustomValueController::class, 'updatecollection'])->name('updatecollection');
 
 
 

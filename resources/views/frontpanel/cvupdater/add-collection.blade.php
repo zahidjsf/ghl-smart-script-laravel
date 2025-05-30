@@ -44,7 +44,7 @@
                 <select id='locations' name='locations' class="form-control">
                     <option value="">Select A Location</option>
                     @foreach ($agencyLocations as $location)
-                    <option data-user-id="{{$location->a_id}}" data-location-id="{{$location->loc_id}}" value="{{ $location->id }}">{{ $location->name }}</option>
+                    <option data-user-id="{{$location->a_id}}" data-location-id="{{$location->loc_id}}" value="{{ $location->id }}|{{ $location->loc_id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
             </div>
@@ -53,7 +53,7 @@
                 <select id='cf_loc' name='cf_loc' class="form-control">
                     <option data-cf-location-id="0" value="0" selected >Same Location As Custom Values Above</option>
                     @foreach ($agencyLocations as $location)
-                    <option data-cf-location-id="{{$location->loc_id}}" value="{{ $location->id }}">{{ $location->name }}</option>
+                    <option data-cf-location-id="{{$location->loc_id}}" value="{{ $location->loc_id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
                 Select the location where you will have your client fill out the form to update the custom values.
@@ -65,12 +65,12 @@
         </div>
         <div class="form-group">
             <label for="col_name">Collection Name</label>
-            <input type="text" class="form-control" id="col_name" name="col_name" value="" placeholder="Enter Collection Name">
+            <input type="text" class="form-control" id="col_name" name="collection_name" value="" placeholder="Enter Collection Name">
         </div>
         <br>
         <div class="form-group">
             <label for="textarea" class=" control-label">Description</label>
-            <textarea name="col_desc" id="textarea" class="form-control" rows="3"></textarea>
+            <textarea name="collection_description" id="textarea" class="form-control" rows="3"></textarea>
         </div>
         <br>
         <div id="customValuesContainer"></div>

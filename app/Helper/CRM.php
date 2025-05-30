@@ -16,7 +16,7 @@ class CRM
     public static $lang_com = 'Company';
     public static $lang_loc = 'Location';
 
-    protected static $userType = ['Company' => 'company_id', 'Location' => 'location_id'];
+    protected static $userType = ['Company' => 'company_id', 'Location' => 'locationId'];
     public static $scopes = "businesses.readonly businesses.write calendars.readonly calendars.write calendars/groups.readonly calendars/groups.write calendars/events.readonly calendars/events.write calendars/resources.readonly calendars/resources.write conversations.readonly conversations.write conversations/message.readonly conversations/message.write campaigns.readonly contacts.readonly contacts.write funnels/redirect.readonly funnels/redirect.write invoices.readonly invoices.write invoices/schedule.readonly invoices/schedule.write invoices/template.readonly invoices/template.write forms.readonly forms.write links.readonly links.write locations.readonly locations.write locations/customValues.readonly locations/customValues.write locations/customFields.readonly locations/customFields.write payments/orders.readonly locations/tags.readonly locations/tags.write locations/templates.readonly locations/tasks.readonly locations/tasks.write payments/transactions.readonly medias.readonly medias.write opportunities.readonly opportunities.write products.readonly products.write products/prices.write products/prices.readonly payments/subscriptions.readonly surveys.readonly users.readonly users.write workflows.readonly saas/company.read saas/company.write saas/location.read saas/location.write companies.readonly snapshots.readonly snapshots.write oauth.readonly oauth.write";
 
     protected static $no_token = 'No Token';
@@ -31,8 +31,8 @@ class CRM
     public static function getCrmToken($where = [])
     {
         $key = '';
-        if (isset($where['location_id'])) {
-            $key = 'loc_' . $where['location_id'];
+        if (isset($where['locationId'])) {
+            $key = 'loc_' . $where['locationId'];
         } elseif (isset($where['company_id'])) {
             $key = 'comp_' . $where['company_id'];
         } else {
@@ -118,7 +118,7 @@ class CRM
     //         if (!$loc) {
     //             $loc = new static::$crm();
     //             $loc->location_id = $code->locationId ?? '';
-    //             $loc->user_type = $type;
+    //             $loc->userType = $type;
     //             $loc->company_id = $cmpid;
     //             $loc->user_id = $company_id;
     //             $loc->crm_user_id = $code->userId ?? '';
@@ -291,7 +291,7 @@ class CRM
             $userType = 'Location';
         }
         if (!$token) {
-            $token = self::getCrmToken(['a_id' => $user_id, 'user_type' => $userType]);
+            $token = self::getCrmToken(['a_id' => $user_id, 'userType' => $userType]);
         }
         $resp = null;
         if ($token && !is_int($token)) {
@@ -432,16 +432,16 @@ class CRM
     }
     public static function getAgencyToken($company_id, $key = 'company_id')
     {
-        return static::getCrmToken([$key => $company_id, 'user_type' => self::$lang_com]);
+        return static::getCrmToken([$key => $company_id, 'userType' => self::$lang_com]);
     }
     public static function getLocationToken($company_id, $location = '')
     {
-        $data = ['user_type' => self::$lang_loc];
+        $data = ['userType' => self::$lang_loc];
         if ($company_id) {
             // $data['user_id']=$company_id;
         }
         if ($location != '') {
-            $data['location_id'] = $location;
+            $data['locationId'] = $location;
         }
 
         $tokenData = static::getCrmToken($data);
@@ -596,7 +596,7 @@ class CRM
             // $headers['Content-Type'] = "application/json";
         }
         $url1 = $main_url . $url;
-        // $usertype = $location->user_type;
+        // $usertype = $location->userType;
         $isFile = strpos($url1, 'upload-file') !== false;
         // dd($isFile);
         $dat = '';
@@ -723,7 +723,7 @@ class CRM
         $message = "Connect to agency first";
         $load_more = false;
         if ($token) {
-            $type = $token->user_type;
+            $type = $token->userType;
 
             $query = 'companies/' . $token->company_id;
 
