@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminPanel\Auth\CustomAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CRMConnectionController;
 use App\Http\Controllers\FrontPanel\CustomValueController;
+use App\Http\Controllers\FrontPanel\CVSmartRewardController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -78,7 +79,7 @@ Route::middleware('auth')->group(function () {
         Route::get('packagedelete/{id}', [PackageController::class, 'destroy'])->name('packagedelete');
         Route::get('package/{package}/project/{detail}', [PackageController::class, 'removeProject'])->name('removeProject');
         Route::delete('packages/{package}/projects/{detail}', [PackageController::class, 'removeProject'])
-        ->name('packages.projects.remove');
+            ->name('packages.projects.remove');
 
         Route::get('snapshots', [SnapshotController::class, 'index'])->name('snapshots');
         Route::get('/getsnapshots', [SnapshotController::class, 'getsnapshots'])->name('get-snapshots');
@@ -91,7 +92,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/settings', [SettingController::class, 'index'])->name('settings');
         Route::post('/settings-save', [SettingController::class, 'update'])->name('setting-save');
-});
+    });
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -138,13 +139,11 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
         Route::post('create-collection', [CustomValueController::class, 'createCollection'])->name('createcollection');
         Route::get('get-customvalues/{id}', [CustomValueController::class, 'getCustomValue'])->name('getcustomvalue');
         Route::post('update-collection-customvalues', [CustomValueController::class, 'updateCollectionCustomValues'])->name('updatecollectioncustomvalues');
-          Route::post('updatecollection/{id}', [CustomValueController::class, 'updatecollection'])->name('updatecollection');
+        Route::post('updatecollection/{id}', [CustomValueController::class, 'updatecollection'])->name('updatecollection');
 
-
+         Route::get('/cv-smartreward/{location}', [CVSmartRewardController::class, 'index'])->name('cv_smartreward');
 
     });
-
-
 });
 
 
