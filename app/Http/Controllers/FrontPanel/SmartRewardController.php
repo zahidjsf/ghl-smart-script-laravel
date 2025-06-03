@@ -68,7 +68,7 @@ class SmartRewardController extends Controller
         return DataTables::of($locations)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $html = '<a href="' . route('frontend.smart_reward.cv_smartreward', ['location' => $row->id, 'col' => '32' ]) . '" class="btn btn-sm btn-primary">Custom Values</a> ';
+                $html = '<a href="' . route('frontend.smart_reward.cv_smartreward', ['id' => $row->id]) . '" class="btn btn-sm btn-primary">Custom Values</a> ';
 
                 $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'edit_details']) . '" class="btn btn-sm btn-secondary load-license-modal">Edit Details</a>';
 
