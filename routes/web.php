@@ -36,7 +36,13 @@ Route::post('/login-post', [CustomAuthController::class, 'login'])->name('login-
 Route::get('/', function () {
 
     if (auth()->check()) {
-        return redirect()->route('accounts');
+        $user = auth()->user();
+        $type = $user->role;
+        if($type == 'admin'){
+            return redirect()->route('admin.accounts');
+        }else{
+            return redirect()->route('frontend.dashboard');
+        }
     }
     return redirect()->route('login');
 });
