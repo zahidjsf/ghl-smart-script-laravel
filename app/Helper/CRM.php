@@ -90,11 +90,12 @@ class CRM
         $loc->refresh_token = $code->refresh_token;
         $loc->save();
         //Delete this and delete the field of name from the oauth
-        $url1 = 'locations/' . $code->locationId ;
-        $cf = CRM::crmV2(auth()->user()->id, $url1,  'get', '', [], false, $code->locationId );
-        $locName = $cf->location->name;
-        $loc->name = $locName;
-        $loc->save();
+        
+        // $url1 = 'locations/' . $code->locationId ;
+        // $cf = CRM::crmV2(auth()->user()->id, $url1,  'get', '', [], false, $code->locationId );
+        // $locName = $cf->location->name;
+        // $loc->name = $locName;
+        // $loc->save();
 
         self::rememberToken($loc);
 

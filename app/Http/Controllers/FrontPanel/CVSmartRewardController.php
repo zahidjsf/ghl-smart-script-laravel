@@ -36,7 +36,7 @@ class CVSmartRewardController extends Controller
         $collectionIds = $this->getCollectionIds($col, $location);
         $customValueDefinitions = CustomValue::whereIn('col_id', $collectionIds)->orderBy('cv_order')->get();
         $inputs = $this->prepareInputs($customValues->customValues, $customValueDefinitions);
-    
+        // dd($inputs);
         return view('frontpanel.smartreward.customvalue', [
             'location' => $location,
             'inputs' => $inputs
