@@ -96,6 +96,12 @@ class CustomValueController extends Controller
                 }
             }
 
+            $collectionAssign = new CollectionAssign();
+            $collectionAssign->loc_id = $collection->orig_loc_id;
+            $collectionAssign->col_id = $collection->id;
+            $collectionAssign->a_id = $collection->a_id;
+            $collectionAssign->proj_id = 7;
+            $collectionAssign->save();
             DB::commit();
             $msg = "Collection Created & Custom Values Added";
             return back()->with('success', $msg);
@@ -273,7 +279,7 @@ class CustomValueController extends Controller
             $collectionAssign->loc_id = $originalCollection->orig_loc_id;
             $collectionAssign->col_id = $newCollection->id;
             $collectionAssign->a_id = $originalCollection->a_id;
-            $collectionAssign->proj_id = 2;
+            $collectionAssign->proj_id = 7;
             $collectionAssign->save();
 
             DB::commit();
