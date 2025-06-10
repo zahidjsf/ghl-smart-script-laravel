@@ -8,8 +8,6 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use App\Models\CustomValue;
 use App\Models\CollectionAssign;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Storage;
 
 class CVSmartRewardController extends Controller
@@ -36,24 +34,25 @@ class CVSmartRewardController extends Controller
         $collectionIds = $this->getCollectionIds($col, $location);
         $customValueDefinitions = CustomValue::whereIn('col_id', $collectionIds)->orderBy('cv_order')->get();
         $inputs = $this->prepareInputs($customValues->customValues, $customValueDefinitions);
-        // dd($inputs);
         return view('frontpanel.smartreward.customvalue', [
             'location' => $location,
             'inputs' => $inputs
         ]);
-
     }
 
-    public function update(Request $request, Location $location)
+    public function update(Request $request)
     {
         $request->validate([
             'locid' => 'required|exists:locations,id',
         ]);
 
+        $location = Location::find($request->locid);
         // Handle file uploads
-        foreach ($request->allFiles() as $fieldName => $file) {
-            $this->handleFileUpload($file, $fieldName, $location);
-        }
+        // Un comment and handle the functionality
+
+        // foreach ($request->allFiles() as $fieldName => $file) {
+        //     $this->handleFileUpload($file, $fieldName, $location);
+        // }
 
         // Handle text/boolean updates
         foreach ($request->except(['_token', 'submit', 'locid', 'r']) as $key => $value) {
@@ -62,34 +61,10 @@ class CVSmartRewardController extends Controller
             }
         }
 
-        return redirect($request->input('r', route('custom-values.index')))
-            ->with('success', 'Custom Values Updated Successfully');
-    }
+        return redirect()->back()->with('success', 'Custom Values Updated Successfully');
+        // return redirect($request->input('r', route('custom-values.index')))
+        //     ->with('success', 'Custom Values Updated Successfully');
 
-    protected function getGhlCustomValues($location)
-    {
-        try {
-            $apiKey = Crypt::decryptString($location->apikey);
-
-            if ($location->loc_id) {
-                // OAuth flow
-                $response = Http::withHeaders([
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $this->getOauthToken($location->loc_id),
-                    'Version' => '2021-07-28',
-                ])->get("https://services.leadconnectorhq.com/locations/{$location->loc_id}/customValues");
-            } else {
-                // API key flow
-                $response = Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $apiKey,
-                ])->get('https://rest.gohighlevel.com/v1/custom-values/');
-            }
-
-            return $response->successful() ? $response->json() : null;
-        } catch (\Exception $e) {
-            report($e);
-            return null;
-        }
     }
 
     protected function getCollectionIds($col, $location)
@@ -205,36 +180,15 @@ class CVSmartRewardController extends Controller
     protected function updateGhlCustomValue($location, $key, $data, $name = null)
     {
         try {
-            $apiKey = Crypt::decryptString($location->apikey);
-
-            if ($location->loc_id) {
-                // OAuth flow
-                $payload = array_merge(['name' => str_replace("_", " ", $name)], $data);
-
-                Http::withHeaders([
-                    'Accept' => 'application/json',
-                    'Authorization' => 'Bearer ' . $this->getOauthToken($location->loc_id),
-                    'Content-Type' => 'application/json',
-                    'Version' => '2021-07-28',
-                ])->put("https://services.leadconnectorhq.com/locations/{$location->loc_id}/customValues/{$key}", $payload);
-            } else {
-                // API key flow
-                Http::withHeaders([
-                    'Authorization' => 'Bearer ' . $apiKey,
-                    'Content-Type' => 'application/json',
-                ])->put("https://rest.gohighlevel.com/v1/custom-values/{$key}", $data);
-            }
+            $user_id = auth()->user()->id;
+            $payload = array_merge(['name' => str_replace("_", " ", $name)], $data);
+            $locationId = $location->loc_id;
+            $parts = explode('-', $key);
+            $cvId = (count($parts) > 1) ? $parts[1] : $key;
+            $url = 'locations/' . $locationId . '/customValues/'. $cvId ; //{' . $key . '}';
+             CRM::crmV2($user_id, $url,  'put', $payload,  [], false, $locationId);
         } catch (\Exception $e) {
             report($e);
         }
-    }
-
-    protected function getOauthToken($locationId)
-    {
-        // Simple implementation - you might want to cache this
-        return cache()->remember("ghl_oauth_{$locationId}", now()->addHours(1), function () use ($locationId) {
-            // Query your database or make an API call to get the token
-            return '';
-        });
     }
 }

@@ -148,7 +148,7 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
         Route::post('updatecollection/{id}', [CustomValueController::class, 'updatecollection'])->name('updatecollection');
 
          Route::get('/cv-smartreward/{id}', [CVSmartRewardController::class, 'index'])->name('cv_smartreward');
-          Route::post('custom-values-update/{id}', [CustomValueController::class, 'update'])->name('custom_values_update');
+          Route::post('custom-values-update/{id}', [CVSmartRewardController::class, 'update'])->name('custom_values_update');
 
     });
 });
