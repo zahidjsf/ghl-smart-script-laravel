@@ -39,16 +39,15 @@ class CRM
             $key = json_encode($where);
         }
         // dd($where);
-// dd(static::$crm::where($where)->first(), $where);
+        // dd(static::$crm::where($where)->first(), $where);
         return gCache::remember($key, 3 * 60, function () use ($where) {
             return static::$crm::where($where)->first();
         });
-
     }
 
     public static function saveCrmToken($code, $company_id, $loc = null)
     {
-        $where = [];//'user_id' => $company_id
+        $where = []; //'user_id' => $company_id
         $type = $code->userType;
         if ($type == self::$lang_loc) {
             $where['locationId'] = $code->locationId ?? '';
@@ -57,7 +56,7 @@ class CRM
         $cmpid = $code->companyId ?? "";
         if (!empty($cmpid)) {
             if ($type == self::$lang_com) {
-            $where['userType'] = self::$lang_com;
+                $where['userType'] = self::$lang_com;
             }
             $where['companyId'] = $cmpid;
         }
@@ -71,9 +70,9 @@ class CRM
                 $loc->userType = $type;
                 $loc->system = 'high level';
 
-                if($type == self::$lang_loc){
+                if ($type == self::$lang_loc) {
                     $loc->type = 'location';
-                }else{
+                } else {
                     $loc->type = 'agency';
                 }
 
@@ -83,14 +82,14 @@ class CRM
             }
         }
 
-        $expiresAt = Carbon::now()->addSeconds( $code->expires_in ?? 0 );
+        $expiresAt = Carbon::now()->addSeconds($code->expires_in ?? 0);
         $loc->token_expires = $expiresAt;
         $loc->scope = $code->scope;
         $loc->access_token = $code->access_token;
         $loc->refresh_token = $code->refresh_token;
         $loc->save();
         //Delete this and delete the field of name from the oauth
-        
+
         // $url1 = 'locations/' . $code->locationId ;
         // $cf = CRM::crmV2(auth()->user()->id, $url1,  'get', '', [], false, $code->locationId );
         // $locName = $cf->location->name;
@@ -264,7 +263,7 @@ class CRM
 
     public static function getLocationAccessTokenFirstTimeByCompany($user_id, $location_id, $retries = 0)
     {
-        $companyToken =  static::$crm::where(['a_id'=> $user_id])->where('type', 'agency')->first();
+        $companyToken =  static::$crm::where(['a_id' => $user_id])->where('type', 'agency')->first();
         $resp = null;
         if ($companyToken && !is_int($companyToken)) {
 
@@ -292,9 +291,9 @@ class CRM
     public static function getLocationAccessToken($user_id, $location_id, $userType = null, $token = null, $retries = 0)
     {
         // \Log::info('step 23');
-        if($userType == null){
+        if ($userType == null) {
             $userType = self::$lang_com;
-        }else{
+        } else {
             $userType = 'Location';
         }
         if (!$token) {
@@ -303,7 +302,7 @@ class CRM
         $resp = null;
         if ($token && !is_int($token)) {
 
-    // \Log::info('Locaion in function ='. $location_id);
+            // \Log::info('Locaion in function ='. $location_id);
             $response = self::makeCall(static::$base_url . "oauth/locationToken", 'POST', "companyId=" . $token->companyId . "&locationId=" . $location_id, [
                 "Accept: application/json",
                 "Authorization: Bearer " . $token->access_token,
@@ -505,7 +504,6 @@ class CRM
             }
             $status = (strtolower($error) == 'unauthorized' && stripos(($error), 'authclass') === false) || (isset($message) && strtolower($message) == 'invalid jwt');
         } catch (\Exception $e) {
-
         }
 
         return $status;
@@ -543,10 +541,9 @@ class CRM
             if (strpos($url, 'custom-values') !== false) {
                 $url = str_replace('-values', 'Values', $url);
             }
-            if(strpos($url, 'contacts') === false){
+            if (strpos($url, 'contacts') === false) {
                 $url = 'locations/' . $location_id . '/' . $url;
             }
-
         } else if ($methodl == 'get') {
             $urlap = self::urlFix($url);
             if (strpos($url, 'location_id=') === false && strpos($url, 'locationId=') === false && strpos($url, 'locations/') === false) {
@@ -612,44 +609,44 @@ class CRM
                 $headers['Content-Type'] = 'multipart/form-data';
                 $dat = $data;
             } else {
-            if (!is_string($data)) {
-                $dat = json_encode($data);
-            } else {
-                $dat = $data;
-            }
-            try {
-                $dat = json_decode($dat) ?? null;
-            } catch (\Exception $e) {
-                $dat = (object) $data;
-            }
-            if (property_exists($dat, 'company_id')) {
-                unset($dat->company_id);
-            }
-            if (property_exists($dat, 'customField')) {
-                $dat->customFields = $dat->customField;
-                unset($dat->customField);
-            }
+                if (!is_string($data)) {
+                    $dat = json_encode($data);
+                } else {
+                    $dat = $data;
+                }
+                try {
+                    $dat = json_decode($dat) ?? null;
+                } catch (\Exception $e) {
+                    $dat = (object) $data;
+                }
+                if (property_exists($dat, 'company_id')) {
+                    unset($dat->company_id);
+                }
+                if (property_exists($dat, 'customField')) {
+                    $dat->customFields = $dat->customField;
+                    unset($dat->customField);
+                }
 
-            if ($methodl == 'post') {
-                $uri = ['businesses', 'calendars', 'contacts', 'conversations', 'links', 'opportunities', 'contacts/bulk/business'];
-                $matching = str_replace('/', '', $urlmain);
-                foreach ($uri as $k) {
-                    if ($matching == $k) {
-                        if (!property_exists($dat, 'locationId')) {
-                            $dat->locationId = $location_id;
+                if ($methodl == 'post') {
+                    $uri = ['businesses', 'calendars', 'contacts', 'conversations', 'links', 'opportunities', 'contacts/bulk/business'];
+                    $matching = str_replace('/', '', $urlmain);
+                    foreach ($uri as $k) {
+                        if ($matching == $k) {
+                            if (!property_exists($dat, 'locationId')) {
+                                $dat->locationId = $location_id;
+                            }
                         }
                     }
                 }
-            }
-            if ($methodl == 'put' && strpos($url, 'contacts') !== false) {
-                if (property_exists($dat, 'locationId')) {
-                    unset($dat->locationId);
+                if ($methodl == 'put' && strpos($url, 'contacts') !== false) {
+                    if (property_exists($dat, 'locationId')) {
+                        unset($dat->locationId);
+                    }
+                    if (property_exists($dat, 'gender')) {
+                        unset($dat->gender);
+                    }
                 }
-                if (property_exists($dat, 'gender')) {
-                    unset($dat->gender);
-                }
             }
-        }
         }
 
         if (strpos($url1, 'status') !== false) {
@@ -747,7 +744,6 @@ class CRM
             } catch (\Throwable $th) {
                 //throw $th;
             }
-
         }
         return ['', ''];
     }
@@ -770,7 +766,6 @@ class CRM
 
                 $finalCustomFields = collect($customFields)->pluck('name', 'id')->toArray();
             }
-
         } catch (\Exception $e) {
         }
 
