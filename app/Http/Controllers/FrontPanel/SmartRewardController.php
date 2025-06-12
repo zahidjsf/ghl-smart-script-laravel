@@ -92,45 +92,8 @@ class SmartRewardController extends Controller
 
         $location = Location::where('id', $id)->first();
 
-        if ($actionType == 'custom_values') {
+        if ($actionType == 'edit_details') {
 
-            $customValues = $this->getCustomValues($location->loc_id);
-            $customValues = json_encode($customValues);
-
-            // dd($customValues->customValues);
-            if ($customValues && property_exists($customValues, 'customValues')) {
-                return redirect()->back()->with('error', 'Could not retrieve Custom Values');
-            }
-            // dd($customValues);
-            // Get custom value types through the collections relationship
-            $cvTypes = $location->customValueCollections()
-                ->with('customValues')
-                ->get()
-                ->pluck('customValues')
-                ->flatten()
-                ->sortBy('cv_order');
-            // Prepare inputs
-            // dd($cvTypes);
-            $inputs = [];
-            foreach ($cvTypes as $cv) {
-                foreach ($customValues->customValues as $value) {
-
-                    if ($this->isMatchingCustomValue($cv, $value)) {
-                        $inputs[] = $this->formatInput($cv, $value, count($inputs));
-                        break;
-                    }
-
-                }
-            }
-            dd($inputs);
-            return view('custom-values.edit', [
-                'location' => $location,
-                'inputs' => $inputs,
-                'msg' => request()->get('msg', '')
-            ]);
-
-            # code...
-        } elseif ($actionType == 'edit_details') {
             $view = view('frontpanel.smartreward.editdetails', get_defined_vars())->render();
             return response()->json(['view' => $view]);
         } elseif ($actionType == 'settings') {
@@ -142,20 +105,19 @@ class SmartRewardController extends Controller
             return response()->json(['view' => $view]);
         } elseif ($actionType == 'manage_rewards') {
             dd('fdsfsdfsd');
-        } else {
-
+        } elseif ($actionType == 'remove') {
             $location->delete();
             CollectionAssign::where(['loc_id' => $id, 'proj_id' => 2])->delete();
             return response()->json(['status' => 'success', 'message' => 'Record deleted successfully']);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Action Not Found']);
         }
-
-        dd($id, $actionType);
     }
 
-       private function isMatchingCustomValue($cv, $value)
+    private function isMatchingCustomValue($cv, $value)
     {
         return $value['name'] == $cv->name ||
-               str_replace(' ', '', $value['fieldKey']) == str_replace(' ', '', $cv->mergeKey);
+            str_replace(' ', '', $value['fieldKey']) == str_replace(' ', '', $cv->mergeKey);
     }
 
 

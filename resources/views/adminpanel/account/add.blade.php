@@ -119,7 +119,7 @@
                                             </select>
                                         </div>
                                     @else
-                                        <input type="hidden" name="role" value="User">
+                                        <input type="hidden" name="role" value="Member">
                                     @endif
 
 

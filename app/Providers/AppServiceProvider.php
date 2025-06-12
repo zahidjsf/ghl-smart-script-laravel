@@ -5,6 +5,15 @@ namespace App\Providers;
 use Illuminate\Support\ServiceProvider;
 use App\Repositories\Interfaces\AdminPanel\ProjectRepositoryInterface;
 use App\Repositories\AdminPanel\ProjectRepository;
+use App\Repositories\Interfaces\AdminPanel\AccountRepositoryInterface;
+use App\Repositories\AdminPanel\AccountRepository;
+use App\Repositories\AdminPanel\PackageRepository;
+use App\Repositories\AdminPanel\SnapshotRepository;
+use App\Repositories\FrontPanel\CustomValueRepository;
+use App\Repositories\FrontPanel\CVSmartRewardRepository;
+use App\Repositories\Interfaces\AdminPanel\PackageRepositoryInterface;
+use App\Repositories\Interfaces\AdminPanel\SnapshotRepositoryInterface;
+use App\Repositories\Interfaces\FrontPanel\CustomValueRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -13,7 +22,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(ProjectRepositoryInterface::class,ProjectRepository::class);
+        // AdminPanel
+        $this->app->bind(ProjectRepositoryInterface::class, ProjectRepository::class);
+        $this->app->bind(AccountRepositoryInterface::class,AccountRepository::class);
+        $this->app->bind(PackageRepositoryInterface::class,PackageRepository::class);
+        $this->app->bind(SnapshotRepositoryInterface::class,SnapshotRepository::class);
+
+        // FrontPanel
+        $this->app->bind(CustomValueRepositoryInterface::class,CustomValueRepository::class);
+        $this->app->bind(CustomValueRepositoryInterface::class,CVSmartRewardRepository::class);
     }
 
     /**
