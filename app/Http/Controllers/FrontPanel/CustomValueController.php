@@ -72,6 +72,7 @@ class CustomValueController extends Controller
 
     public function updateCollectionCustomValues(Request $request)
     {
+        ini_set('max_execution_time', 0);
         $request->validate([
             'location_id' => 'required',
             'cf_location_id' => 'required',

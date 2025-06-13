@@ -436,7 +436,7 @@ class CRM
         }
         return $bd;
     }
-    public static function getAgencyToken($company_id, $key = 'company_id')
+    public static function getAgencyToken($company_id, $key = 'companyId')
     {
         return static::getCrmToken([$key => $company_id, 'userType' => self::$lang_com]);
     }

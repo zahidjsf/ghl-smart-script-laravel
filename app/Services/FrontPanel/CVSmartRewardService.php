@@ -91,14 +91,14 @@ class CVSmartRewardService
             'id' => $ghlValue->id,
             'i' => $index,
             'val' => ($val == "/" || $val == "." || $val == "") ? $default : $val,
-            'fieldtype' => $cv['fieldType'],
-            'tooltip' => $cv['tooltip'],
-            'resources' => $cv['resources'] ? "<br/>Resources:<br/>" . $cv['resources'] : "",
-            'name' => $cv['name'],
-            'cvid' => $cv['id'],
-            'readonly' => $cv['action'] == "readonly" ? "readonly" : "",
-            'summernote' => $cv['cvattribute'] == 'wysiwyg' ? "summernote" . $index : "",
-            'showImage' => in_array($cv['fieldType'], ["logo", "revLogo", "image"]) ? 'yes' : 'no',
+            'fieldtype' => $cv['fieldType'] ?? '',
+            'tooltip' => $cv['tooltip'] ?? '',
+            'resources' => $cv['resources'] ?? '' ? "<br/>Resources:<br/>" . $cv['resources'] ?? '' : "",
+            'name' => $cv['name'] ?? '',
+            'cvid' => $cv['id'] ?? '',
+            'readonly' => $cv['action'] ?? '' == "readonly" ? "readonly" : "",
+            'summernote' => $cv['cvattribute'] ?? '' == 'wysiwyg' ? "summernote" . $index : "",
+            'showImage' => in_array($cv['fieldType'] ?? '', ["logo", "revLogo", "image"]) ? 'yes' : 'no',
         ];
 
         if ($cv['fieldType'] == 'revLogo') {

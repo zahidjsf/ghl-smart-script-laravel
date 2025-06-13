@@ -119,6 +119,7 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
     Route::get('/articles/{id}/{licensekey}', [ArticleController::class, 'show'])->name('articles');
 
     Route::get('/locations-display', [ConnectionController::class, 'locationDisplay'])->name('location-display');
+    Route::get('/fetch-locations', [ConnectionController::class, 'fetchLocations'])->name('fetch-locations');
     Route::post('/final-connect', [ConnectionController::class, 'finalConnect'])->name('final-connect');
 
     Route::name('smart_reward.')->prefix('smart-reward')->group(function () {

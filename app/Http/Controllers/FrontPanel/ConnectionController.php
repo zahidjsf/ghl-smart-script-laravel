@@ -9,34 +9,28 @@ use App\Models\CRMToken;
 
 class ConnectionController extends Controller
 {
-    public function locationDisplay(){
-
+    public function locationDisplay()
+    {
         $userId = auth()->user()->id;
-        // $users = User::where('role', 0)->where('is_active', 1)->where('separate_location', 0)->pluck('location', 'id')->toArray();
-        // $users = User::where('role', 0)->where('is_active', 1)->whereNotNull('location')->get();
-        $crmlocationID = [];
-
-        $allLocations = [];
+        $alreadyConnected = CRMToken::where(['a_id' => $userId, 'type' => 'location'])->pluck('locationId')->toArray();
+        return view('frontpanel.locationconnection.location_display', [
+            'alreadyConnected' => $alreadyConnected
+        ]);
+    }
+    
+    public function fetchLocations(Request $request)
+    {
+        $userId = auth()->user()->id;
+        $skip = $request->input('skip', 0);
         $limit = 100;
-        $skip = 0;
-
-        do {
-            $urlmain = "locations/search?deleted=false&limit={$limit}&skip={$skip}";
-            $locations = CRM::agencyV2($userId, $urlmain);
-            // dd($locations);
-            $locations = $locations->locations ?? [];
-
-            $allLocations = array_merge($allLocations, $locations);
-            $hasMore = count($locations) === $limit;
-            $skip += $limit;
-        } while ($hasMore);
-
-        foreach ($allLocations as $loc) {
-            $crmlocationID[$loc->name] = $loc->id;
-        }
-
-        $alreadyConnected = CRMToken::where(['a_id'=> $userId, 'type' => 'location'])->whereIn('locationId', $crmlocationID)->pluck('locationId')->toArray();
-        return view('frontpanel.locationconnection.location_display', get_defined_vars());
+        $urlmain = "locations/search?deleted=false&limit={$limit}&skip={$skip}";
+        $locations = CRM::agencyV2($userId, $urlmain);
+        $locations = $locations->locations ?? [];
+        return response()->json([
+            'locations' => $locations,
+            'hasMore' => count($locations) === $limit + $skip,
+            'nextSkip' => $skip + $limit  // Send back the next skip value
+        ]);
     }
 
     public function finalConnect(Request $request)
@@ -46,13 +40,12 @@ class ConnectionController extends Controller
         ]);
         try {
             $userId = auth()->user()->id;
-
-            if($request->start == 0){
-                $alreadyConnected = CRMToken::where(['a_id'=> $userId, 'type' => 'location'])->pluck('locationId')->toArray();
+            if ($request->start == 0) {
+                $alreadyConnected = CRMToken::where(['a_id' => $userId, 'type' => 'location'])->pluck('locationId')->toArray();
                 $toDisconnect = array_diff($alreadyConnected, $request->checkedLocations);
                 foreach ($toDisconnect as $delLoc) {
-                  $del = CRMToken::where(['a_id'=> $userId, 'locationId' => $delLoc])->first();
-                  $del->delete();
+                    $del = CRMToken::where(['a_id' => $userId, 'locationId' => $delLoc])->first();
+                    $del->delete();
                 }
             }
             $results = [];
@@ -75,10 +68,4 @@ class ConnectionController extends Controller
             ], 500);
         }
     }
-
-
-
-
-
-
 }

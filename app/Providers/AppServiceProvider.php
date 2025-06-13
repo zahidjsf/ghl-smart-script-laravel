@@ -14,6 +14,7 @@ use App\Repositories\FrontPanel\CVSmartRewardRepository;
 use App\Repositories\Interfaces\AdminPanel\PackageRepositoryInterface;
 use App\Repositories\Interfaces\AdminPanel\SnapshotRepositoryInterface;
 use App\Repositories\Interfaces\FrontPanel\CustomValueRepositoryInterface;
+use App\Repositories\Interfaces\FrontPanel\CVSmartRewardRepositoryInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
 
         // FrontPanel
         $this->app->bind(CustomValueRepositoryInterface::class,CustomValueRepository::class);
-        $this->app->bind(CustomValueRepositoryInterface::class,CVSmartRewardRepository::class);
+        $this->app->bind(CVSmartRewardRepositoryInterface::class,CVSmartRewardRepository::class);
     }
 
     /**
