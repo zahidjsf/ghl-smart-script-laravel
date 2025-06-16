@@ -8,6 +8,9 @@ use Illuminate\Http\Request;
 
 class CustomValueController extends Controller
 {
+    public function checkform(Request $request){
+        \Log::info($request->all());
+    }
     protected $customValueService;
     public function __construct(CustomValueService $customValueService)
     {

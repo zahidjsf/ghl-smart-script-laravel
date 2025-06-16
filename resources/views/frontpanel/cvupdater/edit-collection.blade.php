@@ -174,7 +174,7 @@
         });
 
         // Handle location change
-        $('#locations, #cf_loc').on('change', function() {
+        $('#locations').on('change', function() {
             const locationSelected = $('#locations').val().trim() !== "";
             $('#getFieldsBtnWrapper').toggle(!locationSelected);
         });

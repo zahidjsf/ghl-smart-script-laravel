@@ -17,7 +17,7 @@ class ConnectionController extends Controller
             'alreadyConnected' => $alreadyConnected
         ]);
     }
-    
+
     public function fetchLocations(Request $request)
     {
         $userId = auth()->user()->id;
