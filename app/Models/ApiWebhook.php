@@ -8,8 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ApiWebhook extends Model
 {
     use HasFactory;
-
+    protected $guarded = [];
     public $timestamps = false;
     protected $table = 'apiwebhooks';
-
 }

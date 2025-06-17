@@ -14,6 +14,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CRMConnectionController;
 use App\Http\Controllers\FrontPanel\CustomValueController;
 use App\Http\Controllers\FrontPanel\CVSmartRewardController;
+use App\Http\Controllers\Webhook\CustomValuesController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -26,7 +27,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::post('checkform', [CustomValueController::class, 'checkform']);
+Route::post('Webhook-CustomValues.php', [CustomValuesController::class, 'WebhookCustomValues']);
 
 Route::get('/', function () {
     return view('welcome');
