@@ -35,7 +35,7 @@ class CVSmartRewardRepository implements CVSmartRewardRepositoryInterface
             ->get()
             ->toArray();
     }
-
+    // convert this into jobs
     public function updateGhlCustomValue($userId, $locationId, $cvId, array $data)
     {
         try {

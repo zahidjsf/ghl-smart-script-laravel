@@ -22,7 +22,7 @@ class AccountService
 
     public function getAccountsForDatatable()
     {
-        $currentAccount = Auth::user();
+        $currentAccount = LoginUser();
         $query = $this->accountRepository->getAccountsForDatatable($currentAccount);
 
         return DataTables::of($query)

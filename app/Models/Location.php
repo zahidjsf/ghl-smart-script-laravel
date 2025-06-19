@@ -11,10 +11,10 @@ class Location extends Model
 
     protected $table = 'locations';
     public $timestamps = false;
-
+    const defaultProjectId = 2;
     public function customValueCollections()
     {
         return $this->belongsToMany(CustomValueCollection::class, 'collection_assign', 'loc_id', 'col_id')
-            ->where('proj_id', 2);
+            ->where('proj_id', self::defaultProjectId);
     }
 }

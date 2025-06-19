@@ -138,7 +138,7 @@ class CVSmartRewardService
             $path = $file->store('smart_images', 's3');
             $url = Storage::disk('s3')->url($path);
 
-            $this->processFieldUpdate($key, $url, $location, auth()->user()->id, $cvName);
+            $this->processFieldUpdate($key, $url, $location, LoginUser(true), $cvName);
         }
     }
 

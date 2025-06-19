@@ -15,6 +15,7 @@ use App\Http\Controllers\CRMConnectionController;
 use App\Http\Controllers\FrontPanel\CustomValueController;
 use App\Http\Controllers\FrontPanel\CVSmartRewardController;
 use App\Http\Controllers\Webhook\CustomValuesController;
+use App\Models\Account;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -27,7 +28,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::post('Webhook-CustomValues.php', [CustomValuesController::class, 'WebhookCustomValues']);
+Route::post('Webhook-CustomValues.php', [CustomValuesController::class, 'webhookCustomValues']);
 
 Route::get('/', function () {
     return view('welcome');
@@ -35,12 +36,13 @@ Route::get('/', function () {
 
 Route::get('/login', [CustomAuthController::class, 'loginForm'])->name('login');
 Route::post('/login-post', [CustomAuthController::class, 'login'])->name('login-post');
+
 Route::get('/', function () {
 
     if (auth()->check()) {
-        $user = auth()->user();
+        $user = LoginUser();
         $type = $user->role;
-        if($type == 'admin'){
+        if($type == Account::ADMIN || $type == Account::SUBADMIN){
             return redirect()->route('admin.accounts');
         }else{
             return redirect()->route('frontend.dashboard');
@@ -50,7 +52,7 @@ Route::get('/', function () {
 });
 
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth', 'admin_subadmin')->group(function () {
 
     Route::get('/logout', [CustomAuthController::class, 'logout'])->name('logout');
 
@@ -118,7 +120,7 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
 
     Route::get('dashboard', [FrontController::class, 'dashboard'])->name('dashboard');
     Route::post('agency-update', [FrontController::class, 'agencyUpdate'])->name('agencyUpdate');
-    Route::get('/articles/{id}/{licensekey}', [ArticleController::class, 'show'])->name('articles');
+    // Route::get('/articles/{id}/{licensekey}', [ArticleController::class, 'show'])->name('articles');
 
     Route::get('/locations-display', [ConnectionController::class, 'locationDisplay'])->name('location-display');
     Route::get('/fetch-locations', [ConnectionController::class, 'fetchLocations'])->name('fetch-locations');

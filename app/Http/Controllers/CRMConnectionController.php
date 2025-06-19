@@ -15,7 +15,7 @@ class CRMConnectionController extends Controller
 
         $code = $request->code ?? null;
         if ($code) {
-            $user_id = auth()->user()->id;
+            $user_id = LoginUser(true);
             $code = CRM::crm_token($code, '');
             $code = json_decode($code);
             $user_type = $code->userType ?? null;

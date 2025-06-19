@@ -12,7 +12,7 @@
                     </div> --}}
                     <span class="profile-username">
                         <span class="op-7">Hi,</span>
-                        <span class="fw-bold">{{ auth()->user()->fName }}</span>
+                        <span class="fw-bold">{{ LoginUser()->fName }}</span>
                     </span>
                 </a>
                 <ul class="dropdown-menu dropdown-user animated fadeIn">
@@ -24,8 +24,8 @@
                                         class="avatar-img rounded" />
                                 </div> --}}
                                 <div class="u-text">
-                                    <h4>{{ auth()->user()->fName }}</h4>
-                                    <p class="text-muted">{{ auth()->user()->email }}</p>
+                                    <h4>{{ LoginUser()->fName }}</h4>
+                                    <p class="text-muted">{{ LoginUser(true)->email }}</p>
                                     {{-- <a href="profile.html"
                                         class="btn btn-xs btn-secondary btn-sm">View Profile</a> --}}
                                 </div>

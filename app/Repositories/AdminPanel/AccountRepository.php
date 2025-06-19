@@ -24,7 +24,7 @@ class AccountRepository implements AccountRepositoryInterface
     {
         $query = Account::with('detail');
 
-        if ($currentAccount->role == 'SubAdmin') {
+        if ($currentAccount->role == Account::SUBADMIN) {
             $query->whereHas('detail', function ($q) use ($currentAccount) {
                 $q->where('parent_id', $currentAccount->id);
             });

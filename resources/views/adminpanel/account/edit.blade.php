@@ -140,7 +140,7 @@
                                     </div>
                                 </div>
 
-                                @if(auth()->user()->id == 1)
+                                @if(LoginUser(true) == 1)
                                 <div class="form-group">
                                     <label for="role">Role</label>
                                     <select class="form-control" id="role" name="role" required>
@@ -159,7 +159,7 @@
                                     @foreach($systemProjects as $project)
                                     @php
                                     $checked = in_array($project->id, $systemAccess);
-                                    $disabled = auth()->user()->id != 1 && $project->a_id != auth()->user()->id;
+                                    $disabled = LoginUser(true) != 1 && $project->a_id != LoginUser(true);
 
                                     $license = $account->projects->firstWhere('id', $project->id);
                                     $numLicenses = $license ? $license->pivot->numLicenses : 0;
@@ -192,7 +192,7 @@
                                 </div>
                                 <div id="license-modal-container"></div>
 
-                                @if(auth()->user()->id == 1)
+                                @if(LoginUser(true) == 1)
                                 <div class="form-group">
                                     <h4>SMART SCRIPTS BUNDLE MEMBER</h4>
                                     <div class="form-check">

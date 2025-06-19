@@ -20,13 +20,13 @@ class CustomValueController extends Controller
 
     public function getCollections()
     {
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         return $this->customValueService->getCollectionsForDatatable($userId);
     }
 
     public function addcollection()
     {
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         $agencyLocations = $this->customValueService->getAgencyLocations($userId);
         return view('frontpanel.cvupdater.add-collection', get_defined_vars());
     }
@@ -43,7 +43,7 @@ class CustomValueController extends Controller
         }
         try {
             $data = $request->all();
-            $data['a_id'] = auth()->user()->id;
+            $data['a_id'] = LoginUser(true);
             $this->customValueService->createCollection($data);
 
             return back()->with('success', "Collection Created & Custom Values Added");
@@ -64,7 +64,7 @@ class CustomValueController extends Controller
 
     public function editCollection($id)
     {
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         $collection = $this->customValueService->getCollection($id, $userId);
         $agencyLocations = $this->customValueService->getAgencyLocations($userId);
         return view('frontpanel.cvupdater.edit-collection', get_defined_vars());
@@ -80,7 +80,7 @@ class CustomValueController extends Controller
         ]);
 
         try {
-            $userId = auth()->user()->id;
+            $userId = LoginUser(true);
             $locationId = $request->location_id;
             $cfLocationId = $request->cf_location_id;
             $collectionId = $request->collection_id;
@@ -119,7 +119,7 @@ class CustomValueController extends Controller
         }
         try {
             $data = $request->all();
-            $data['a_id'] = auth()->user()->id;
+            $data['a_id'] = LoginUser(true);
             $this->customValueService->updateCollection($id, $data);
 
             return back()->with('success', "Collection Updated Successfully");
@@ -130,7 +130,7 @@ class CustomValueController extends Controller
 
     public function copyCollection($id)
     {
-        $collection = $this->customValueService->getCollection($id, auth()->user()->id);
+        $collection = $this->customValueService->getCollection($id, LoginUser(true));
         $view = view('frontpanel.cvupdater.copy-collection', get_defined_vars())->render();
         return response()->json(['view' => $view]);
     }

@@ -96,7 +96,7 @@ class CustomValueService
         $cf_loc = $data['cf_loc'] == 0 ? $secondValue : $data['cf_loc'];
 
         $collectionData = [
-            'a_id' => $data['a_id'] ?? auth()->user()->id,
+            'a_id' => $data['a_id'] ?? LoginUser(true),
             'orig_loc_id' => $orig_loc_id,
             'cf_loc_id' => $cf_loc,
             'name' => $data['collection_name'],
@@ -108,7 +108,7 @@ class CustomValueService
         foreach ($data['cv'] as $index => $cvData) {
             if (isset($cvData['select'])) {
                 $cvData['col_id'] = $collection->id;
-                $cvData['a_id'] = $data['a_id'] ?? auth()->user()->id;
+                $cvData['a_id'] = $data['a_id'] ?? LoginUser(true);
                 $this->customValueRepository->updateCustomValue($cvData['cv_id'] ?? null, $cvData);
             }else{
                 $delCV = CustomValue::where('id', $cvData['cv_id'])->first();

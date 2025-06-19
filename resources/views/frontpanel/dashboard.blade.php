@@ -9,8 +9,8 @@
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2>Dashboard<strong> - Welcome back, {{ auth()->user()->fName }} {{ auth()->user()->lName }} From
-                        {{ auth()->user()->agency_name }}!</strong></h2>
+                <h2>Dashboard<strong> - Welcome back, {{ LoginUser()->fName }} {{ LoginUser()->lName }} From
+                        {{ LoginUser()->agency_name }}!</strong></h2>
             </div>
         </div>
     </div>
@@ -144,7 +144,7 @@
             <div class="row" style="margin-top:15px;">
                 @foreach ($projects as $project)
                     <div class="col-md-4">
-                        <a href="{{ $project['url'] }}?licensekey={{ auth()->user()->licensekey }}" type="button"
+                        <a href="{{ $project['url'] }}?licensekey={{ LoginUser()->licensekey }}" type="button"
                             class="btn btn-grad "
                             style="padding:15px; font-size:16px; font-weight:700;">{{ $project['name'] }}</a>
                     </div>
@@ -170,10 +170,11 @@
                                 <div class="card-body justify">
                                     {{ Str::limit(strip_tags($article['content']['description']), 200) }}...
                                 </div>
-                                <div class="card-footer" style="margin-top:15px;">
-                                    <a href="{{ route('frontend.articles', ['id' => $article['_id'], 'licensekey' => auth()->user()->licensekey]) }}"
+                                <!-- ('frontend.articles', ['id' => $article['_id'], 'licensekey' => LoginUser()->licensekey]) -->
+                                <!-- <div class="card-footer" style="margin-top:15px;">
+                                    <a href=""
                                         type="button" class="btn btn-primary">Read More</a>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
@@ -184,10 +185,10 @@
                 @endforeach
             </div>
 
-            @if (in_array(auth()->id(), [10, 1]))
-                @if (auth()->user()->SMART_Reviews)
+            @if (in_array(LoginUser(true), [10, 1]))
+                @if (LoginUser()->SMART_Reviews)
                     @php
-                        $accountLocations = getAccountLocations(auth()->id(), 1);
+                        $accountLocations = getAccountLocations(LoginUser(true), 1);
                         $totalRevReq = 0;
 
                         foreach ($accountLocations as $location) {
@@ -240,9 +241,9 @@
                 </div>
             </div>
 
-            @if (auth()->user()->oauth == 0 && auth()->user()->account_type != 'starter')
+            @if (LoginUser()->oauth == 0 && LoginUser()->account_type != 'starter')
                 @php
-                    $aid = auth()->user()->id ?? session('id');
+                    $aid = LoginUser()->id ?? session('id');
                     $state = 'aid-' . $aid;
                 @endphp
                 <div class="row">
@@ -264,7 +265,7 @@
                 </div>
             @endif
 
-            @if (!auth()->user()->isMember)
+            @if (!LoginUser()->isMember)
                 <h2>Get It All!</h2>
                 {{-- <div class="card">
                     <div class="card-body"> --}}
@@ -272,7 +273,7 @@
                             src="{{ asset('frontpanel/assets/img/SmartPowerToolsBundle.jpg') }}">
                         <h3 class="card-title">SMART SCRIPTS</h3>
                         <h4 class="card-title">Power Tools Bundle</h4>
-                        @if (auth()->user()->SMART_Reviews)
+                        @if (LoginUser()->SMART_Reviews)
                             <h3>Reviews LTD Owners - Save 40%</h3>
                         @endif
                         <p class="card-text">Tools, Scripts, Snapshots, and Apps that give you more functionality and

@@ -23,10 +23,11 @@ class PackageController extends Controller
 
     public function getpackages(Request $request)
     {
+        $user = LoginUser();
         if ($request->ajax()) {
             return $this->packageService->getPackagesForDatatable(
-                Auth::id(),
-                Auth::user()->role
+                $user->id,
+                $user->role
             );
         }
     }

@@ -24,7 +24,7 @@ class SmartRewardController extends Controller
     public function index()
     {
 
-        $authUser = auth()->user();
+        $authUser = LoginUser();
         $user_id = $authUser->id;
 
         $projdetail = SystemProject::where('id', 2)->first();
@@ -61,7 +61,7 @@ class SmartRewardController extends Controller
     public function getLocations()
     {
 
-        $authUser = auth()->user();
+        $authUser = LoginUser();
         $user_id = $authUser->id;
 
         $locations = Location::where(['a_id' => $user_id, 'proj_id' => 2]);
@@ -125,7 +125,7 @@ class SmartRewardController extends Controller
     {
         if ($locId) {
             $url = 'locations/' . $locId . '/customValues';
-            $response = CRM::crmV2(auth()->user()->id, $url,  'get', '', [], false, $locId);
+            $response = CRM::crmV2(LoginUser(true), $url,  'get', '', [], false, $locId);
             return $response;
         }
     }
@@ -234,7 +234,7 @@ class SmartRewardController extends Controller
             'leaderboard_css' => 'required'
         ]);
 
-        $authUser = auth()->user();
+        $authUser = LoginUser();
         $user_id = $authUser->id;
         $setting = AccountSetting::where('a_id', $user_id)->first();
 
@@ -251,8 +251,7 @@ class SmartRewardController extends Controller
 
     public function addLocations()
     {
-        $account = Auth::user()->account;
-        $account = auth()->user();
+        $account = LoginUser();
         $account_id = $account->id;
         $currentLocations = Location::where('a_id', $account_id)->get();
         $agencyLocations = [];
@@ -287,7 +286,7 @@ class SmartRewardController extends Controller
     public function locationAdd(Request $request)
     {
 
-        $account = auth()->user();
+        $account = LoginUser();
 
         $validated = $request->validate([
             'project_id' => 'required|exists:systemprojects,id',

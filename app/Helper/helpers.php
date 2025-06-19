@@ -2,7 +2,7 @@
 use App\Models\Setting;
 use App\Models\Article;
 use App\Models\ArticleContent;
-
+use Illuminate\Support\Facades\Auth;
 
 if(!function_exists('onlyWhatsApp')){
     function onlyWhatsApp(){
@@ -89,4 +89,15 @@ function setting($key, $id = 1)
         return $setting;
     }
     return $setting[$key] ?? null;
+}
+
+function LoginUser($onlyId = false){
+    $user = Auth::user();
+    if(!$user){
+        return null;
+    }
+    if($onlyId){
+        return $user->id;
+    }
+    return $user;
 }

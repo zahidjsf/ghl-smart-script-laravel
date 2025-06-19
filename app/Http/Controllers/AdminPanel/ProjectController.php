@@ -26,7 +26,7 @@ class ProjectController extends Controller
 
     public function getProjects()
     {
-        $account = Auth::user();
+        $account = LoginUser();
         $projects = $this->projectService->getAllProjectsForAccount($account);
 
         return DataTables::of($projects)

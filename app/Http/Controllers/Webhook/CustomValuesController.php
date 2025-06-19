@@ -15,11 +15,10 @@ use stdClass;
 
 class CustomValuesController extends Controller
 {
-    public function WebhookCustomValues(Request $request)
+    public function webhookCustomValues(Request $request)
     {
         $jsonText = $request->json()->all() ?: $request->all();
-
-        $locId = $request->input('location55', $jsonText['customData']['location'] ?? null);
+        $locId = $request->input('location', $jsonText['location']['id'] ?? null);
 
         if (!$locId) {
             return response()->json(['error' => 'Location ID is required'], 400);
@@ -145,7 +144,7 @@ class CustomValuesController extends Controller
         if ($location) {
             $locId = $location->loc_id;
             $url = 'locations/' . $locId . '/customValues';
-            $response = CRM::crmV2(auth()->user()->id, $url,  'get', '', [], false, $locId);
+            $response = CRM::crmV2(LoginUser(true), $url,  'get', '', [], false, $locId);
             return $response->json();
         }
         return;
@@ -155,7 +154,7 @@ class CustomValuesController extends Controller
     {
 
         $locationId = $location->loc_id;
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         $url = 'locations/' . $locationId . '/customValues/' . $cvId;
         $response = CRM::crmV2($userId, $url, 'put', $data, [], false, $locationId);
 

@@ -17,7 +17,7 @@ class FrontController extends Controller
     public function dashboard()
     {
 
-        $authUser = auth()->user();
+        $authUser = LoginUser();
         // dd($authUser);
         $projects = SystemProject::get();
         $articles = getScriptsEntries("2", "date", "desc", "3");
@@ -41,7 +41,7 @@ class FrontController extends Controller
 
     public function profileData()
     {
-        $authUser = auth()->user();
+        $authUser = LoginUser();
         // dd($authUser);
         return view('frontpanel.profile.detail', get_defined_vars());
     }

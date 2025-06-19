@@ -11,7 +11,7 @@ class ConnectionController extends Controller
 {
     public function locationDisplay()
     {
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         $alreadyConnected = CRMToken::where(['a_id' => $userId, 'type' => 'location'])->pluck('locationId')->toArray();
         return view('frontpanel.locationconnection.location_display', [
             'alreadyConnected' => $alreadyConnected
@@ -20,7 +20,7 @@ class ConnectionController extends Controller
 
     public function fetchLocations(Request $request)
     {
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         $skip = $request->input('skip', 0);
         $limit = 100;
         $urlmain = "locations/search?deleted=false&limit={$limit}&skip={$skip}";
@@ -39,7 +39,7 @@ class ConnectionController extends Controller
             'connectLocations' => 'required|array'
         ]);
         try {
-            $userId = auth()->user()->id;
+            $userId = LoginUser(true);
             if ($request->start == 0) {
                 $alreadyConnected = CRMToken::where(['a_id' => $userId, 'type' => 'location'])->pluck('locationId')->toArray();
                 $toDisconnect = array_diff($alreadyConnected, $request->checkedLocations);

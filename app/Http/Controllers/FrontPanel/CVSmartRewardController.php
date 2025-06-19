@@ -17,7 +17,7 @@ class CVSmartRewardController extends Controller
 
     public function index($id)
     {
-        $userId = auth()->user()->id;
+        $userId = LoginUser(true);
         $data = $this->service->getLocationData($id, $userId);
 
         if (!$data) {
@@ -35,7 +35,7 @@ class CVSmartRewardController extends Controller
         $request->validate([
             'locid' => 'required|exists:locations,id',
         ]);
-        $success = $this->service->updateCustomValues($request->except(['_token', 'submit', 'r']), auth()->user()->id);
+        $success = $this->service->updateCustomValues($request->except(['_token', 'submit', 'r']), LoginUser(true));
         if (!$success) {
             return redirect()->back()->with('error', 'Failed to update custom values');
         }

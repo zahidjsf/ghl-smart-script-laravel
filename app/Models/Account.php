@@ -11,6 +11,9 @@ class Account extends Model implements AuthenticatableContract
 {
     use HasFactory, Authenticatable;
     public $timestamps = false;
+    const SUBADMIN = 'SubAdmin';
+    const MEMBER = 'Member';
+    const ADMIN = 'Admin';
     protected $hidden = [
         'password',
         'remember_token',
