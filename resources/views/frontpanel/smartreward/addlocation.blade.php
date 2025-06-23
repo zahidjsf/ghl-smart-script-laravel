@@ -3,7 +3,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Add Location Data</h4>
+                <h4 class="modal-title">{{ __('messages.add_location_data') }}</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"></span>
                 </button>
@@ -17,9 +17,9 @@
 
                     @if ($showLocationSelect)
                     <div class="form-group" id="select-div">
-                        <label for='selectLocation'>Select Location Id</label><br />
+                        <label for='selectLocation'>{{ __('messages.select_location') }}</label><br />
                         <select id='selectLocation' name='sel_loc_id' class="form-control">
-                            <option>Select A Location</option>
+                            <option>{{ __('messages.select_location') }}</option>
                             @foreach ($agencyLocations as $location)
                             <option value="{{ $location->id }}">{{ $location->name }}</option>
                             @endforeach
@@ -28,39 +28,35 @@
                     <br>
                     @if ($projectId == 2)
                     <div class="form-group">
-                        <label><input type="checkbox" name="add_promo_loc" value="yes" checked /> Authorize
-                            Promotions</label>
-                        <br /><small>Add Selected Location To The Promotions App</small>
+                        <label><input type="checkbox" name="add_promo_loc" value="yes" checked />{{ __('messages.auth_promo') }}</label>
+                        <br /><small>{{ __('messages.auth_promo_desc') }}</small>
                     </div>
                     <br>
 
                     <div class="form-group">
-                        <label><input type="checkbox" name="add_loyalty_loc" value="yes" /> Authorize Loyalty
-                            Stamp
-                            Cards</label>
-                        <br /><small>Add Selected Location To The Loyalty Stamp Cards App</small>
+                        <label><input type="checkbox" name="add_loyalty_loc" value="yes" />{{ __('messages.auth_loyalty') }}</label>
+                        <br /><small>{{ __('messages.auth_loyalty_desc') }}</small>
                     </div>
                     <br>
 
                     <hr />
                     @endif
 
-                    <div class='showManLoc'><a href='#' onclick='showManLoc();'>Add Location Manually - Click
-                            To Show
-                            Form.</a></div>
+                    <div class='showManLoc'><a href='#' onclick='showManLoc();'>{{ __('messages.add_location') }}</a></div>
                     <br>
                     <div class='manualLoc' style='display:none;'>
                         @endif
 
                         <div class="form-group">
-                            Select a previously added location, or add a new location via API & Location ID.
+                            {{ __('messages.previous_location') }}
+
                         </div>
                         <br>
 
                         <div class="form-group">
-                            <label for='selectCurLoc'>Choose A Previously Added Location</label><br />
+                            <label for='selectCurLoc'> {{ __('messages.prev_location') }}</label><br />
                             <select id='selectCurLoc' name='selectCurLoc' class="form-control">
-                                <option>Select A Location</option>
+                                <option>{{ __('messages.select_location') }}</option>
                                 @foreach ($currentLocations as $loc)
                                 <option value="{{ $loc->loc_id }}">{{ $loc->name }}</option>
                                 @endforeach
@@ -69,9 +65,9 @@
                         <br>
 
                         <div class="form-group">
-                            <label for="loc_name">Location Name</label>
+                            <label for="loc_name">{{ __('messages.location_name') }}</label>
                             <input type="text" class="form-control" id="loc_name" name="loc_name" value="">
-                            <label for="loc_id">Location Id</label>
+                            <label for="loc_id"> {{ __('messages.loc_id') }}</label>
                             <input type="text" class="form-control" id="loc_id" name="loc_id" value="">
                         </div>
                         <br>
@@ -83,31 +79,31 @@
                     @if ($projectId == 1)
                     <div class="form-group">
                         <input type="checkbox" class="form-group" id="ml" value="yes" name="ml">
-                        <label for="ml">Is this a multi-location review site?<br /></label>
-                        <span class="small">(requires Multi Location Snapshot)</span>
+                        <label for="ml">{{ __('messages.multi_loc') }}<br /></label>
+                        <span class="small">{{ __('messages.req_multi_loc') }} </span>
                     </div>
                     <br>
                     @endif
 
                     @if ($projectId == 2)
                     <div class="form-group" style="margin-top:15px;">
-                        <label for="snapshot">Select Industry Snapshot</label><br />
+                        <label for="snapshot">{{ __('messages.ind_snap') }}</label><br />
                         <select name="snapshot" class="form-control">
-                            <option value="base">Original Loyalty & Rewards</option>
-                            <option value="restaurant">Restaurant Rewards & Promotions</option>
-                            <option value="fitness">Fitness Rewards & Marketing</option>
-                            <option value="salon">Salon / Spa Rewards & Marketing</option>
-                            <option value="hs">Home Services - Rewards, Referrals & Promotions</option>
+                            <option value="base">{{ __('messages.orig_loyalty') }} </option>
+                            <option value="restaurant">{{ __('messages.rest_reward') }} </option>
+                            <option value="fitness">{{ __('messages.fitness_reward') }} </option>
+                            <option value="salon">{{ __('messages.salon_spa_reward') }} </option>
+                            <option value="hs">{{ __('messages.home_service_reward') }}</option>
                         </select><br />
-                        <span class="small">Which snapshot do you plan on using?<br />This will not install the
-                            snapshot, but will set up our editor for your plans.</span>
+                        <span class="small">{{ __('messages.current_snapshot') }}<br />
+                        {{ __('messages.current_snapshot_desc') }}
+                        </span>
                     </div>
                     @endif
                     <br>
 
                     <div class="modal-footer">
-                        <button type="submit" name="insert" onclick="LocLoader()" class="btn btn-primary add-location">Save
-                            changes</button>
+                        <button type="submit" name="insert" onclick="LocLoader()" class="btn btn-primary add-location">{{ __('messages.save') }}</button>
                     </div>
                 </form>
             </div>

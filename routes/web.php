@@ -16,6 +16,7 @@ use App\Http\Controllers\FrontPanel\CustomValueController;
 use App\Http\Controllers\FrontPanel\CVSmartRewardController;
 use App\Http\Controllers\Webhook\CustomValuesController;
 use App\Models\Account;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,13 +32,15 @@ use Illuminate\Support\Facades\Route;
 Route::post('Webhook-CustomValues.php', [CustomValuesController::class, 'webhookCustomValues']);
 
 Route::get('/', function () {
+    // App::setLocale('es');
+    //  session()->put('locale', 'Spanish');
     return view('welcome');
 });
 
 Route::get('/login', [CustomAuthController::class, 'loginForm'])->name('login');
 Route::post('/login-post', [CustomAuthController::class, 'login'])->name('login-post');
 
-Route::get('/', function () {
+Route::get('/2', function () {
 
     if (auth()->check()) {
         $user = LoginUser();

@@ -8,7 +8,7 @@
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2><strong>Smart Rewards</strong></h2>
+                <h2><strong>{{ __('messages.smart_rewards') }}</strong></h2>
             </div>
         </div>
     </div>
@@ -46,26 +46,23 @@
             {!! $licenseMsg !!}
         </div>
         <div>
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">Add Custom
-                CSS</button>
-            <button class="btn btn-secondary me-2" onclick="toggleCode();">Get LeaderBoard Link</button>
-            <button class="btn btn-success me-2" onclick="toggleSnapshots()">Get Snapshot</button>
-            <a href="{{ route('frontend.smart_reward.addlocations') }}" class="location-add-modal btn btn-danger"> Add a
-                Rewards Location </a>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">{{ __('messages.add_customcss') }}</button>
+            <button class="btn btn-secondary me-2" onclick="toggleCode();">{{ __('messages.leaderboard_link') }}</button>
+            <button class="btn btn-success me-2" onclick="toggleSnapshots()"> {{ __('messages.get_snapshot') }}</button>
+            <a href="{{ route('frontend.smart_reward.addlocations') }}" class="location-add-modal btn btn-danger"> {{ __('messages.reward_location') }}</a>
         </div>
     </div>
 
     @verbatim
         <div class="form-group center codesection" style="display:none; margin:0;">
-            <label>Leaderboard Custom Menu Link:</label>
-            <small class="form-text text-muted">Paste this link into custom menu links to display the Rewards
-                Leaderboard</small>
+            <label> {{ __('messages.leaderboard_custom_menu') }}</label>
+            <small class="form-text text-muted">{{ __('messages.paste_leaderboard_link') }}</small>
 
             <div class="input-group mt-2">
                 <input type="text" class="form-control" id="leaderboardLink" readonly
                     value="https://api.ghlsmartscripts.com/Rewards/getRewardsLeaderboardData.php?location={{ location . id }}">
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyLeaderboardLink()">Copy</button>
+                    <button class="btn btn-outline-secondary" type="button" onclick="copyLeaderboardLink()">{{ __('messages.copy') }}</button>
                 </div>
             </div>
         </div>
@@ -75,20 +72,16 @@
         <div class="col-md-4">
             <h4>Snapshot links:</h4>
             <div><a class="btn btn-success " target="_blank"
-                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=sb6K1JZOMgYkI1Jcmegw">Original
-                    Snapshot (Service Businesses)</a></div>
+                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=sb6K1JZOMgYkI1Jcmegw">{{ __('messages.original_snapshot') }}</a></div>
             <br />
             <div><a class="btn btn-primary " target="_blank"
-                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=AQGzYoeDlS9dNpKO4Lnn">Restaurant
-                    Rewards & Marketing (February 2025)</a></div>
+                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=AQGzYoeDlS9dNpKO4Lnn">{{ __('messages.retaurant_reward') }}</a></div>
             <br />
             <div><a class="btn btn-warning " style="background-color: rgb(230, 54, 54);" target="_blank"
-                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=1WcZPiNjg3RHy2rpR7VV">Salon
-                    Snapshot/Med Spa (June 14 2024)</a></div>
+                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=1WcZPiNjg3RHy2rpR7VV"> {{ __('messages.salon_snapshot') }}</a></div>
             <br />
             <div><a class="btn btn-success" style="background-color: rgb(255, 115, 0);" target="_blank"
-                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=c7r92eZG1uOorH7jwyRT">Fitness
-                    Marketing</a></div>
+                    href="https://affiliates.gohighlevel.com/?fp_ref=think-big-studios57&share=c7r92eZG1uOorH7jwyRT"> {{ __('messages.fitness_marketing') }}</a></div>
         </div>
         <div class="col-md-4">
 
@@ -105,8 +98,8 @@
                 <table class="table table-bordered" id="locations-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Action</th>
+                            <th>{{ __('messages.name') }}</th>
+                            <th>{{ __('messages.action') }}</th>
                         </tr>
                     </thead>
                 </table>
@@ -123,7 +116,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="myModalLabel">Add Custom CSS</h5>
+                    <h5 class="modal-title" id="myModalLabel">{{ __('messages.add_customcss') }}</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
@@ -131,16 +124,17 @@
                     @csrf
 
                     <div class="modal-body">
-                        <strong> WARNING:</strong><br>If your CSS Is not formatter properly, it can break the
-                        functionality of the pages is is on.
+                        <strong>{{ __('messages.warning') }}</strong><br>
+                        {{ __('messages.warning_text') }}
+
                         <hr>
-                        <strong>Leaderboard CSS:</strong>
+                        <strong>{{ __('messages.leadboardcss') }}</strong>
                         <p>Add custom CSS to update the look of the leaderboard.</p>
                         <textarea name="leaderboard_css" cols="70" rows="10">{{ $setting->rewards_css ?? '' }}</textarea>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">{{ __('messages.close') }}</button>
+                        <button type="submit" class="btn btn-primary">{{ __('messages.save') }}</button>
                     </div>
                 </form>
             </div>

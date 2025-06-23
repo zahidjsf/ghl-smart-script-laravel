@@ -48,10 +48,13 @@ class SmartRewardController extends Controller
 
         if ($projectlicense && $numLocations >= $projectlicense->licenses ?? 0) {
             $limit = "full";
-            $licenseMsg = "<strong>Location Credits Used:</strong> " . $numLocations . " of " . $numLicenses . "<br/><span class='red'>You will need to purchase more licenses in order to add a new location.</span>";
+            $creditsused = __('messages.cred_used');
+            $more = __('messages.more_cred_used');
+            $licenseMsg = "<strong>". $creditsused . "</strong> " . $numLocations . " of " . $numLicenses . "<br/><span class='red'>". $more ."</span>";
         } else {
             $limit = "active";
-            $licenseMsg = "<strong>Location Licenses Used:</strong> " . $numLocations . " of " . $numLicenses;
+            $text = __('messages.lic_used');
+            $licenseMsg = "<strong>".$text ."</strong> " . $numLocations . " of " . $numLicenses;
         }
 
         return view('frontpanel.smartreward.index', get_defined_vars());

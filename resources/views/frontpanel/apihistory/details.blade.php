@@ -26,7 +26,7 @@
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2><strong>API History</strong></h2>
+                <h2><strong>{{ __('messages.api_history') }}</strong></h2>
             </div>
         </div>
     </div>
@@ -46,13 +46,13 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Location ID</th>
-                            <th>Webhook Data</th>
-                            <th>Status</th>
-                            <th>Date</th>
-                            <th>Type</th>
-                            <th>Notes</th>
-                            <th>Extra</th>
+                            <th>{{ __('messages.location_id') }} </th>
+                            <th>{{ __('messages.webhook_data') }}</th>
+                            <th>{{ __('messages.status') }}</th>
+                            <th>{{ __('messages.date') }}</th>
+                            <th>{{ __('messages.type') }}</th>
+                            <th>{{ __('messages.notes') }}</th>
+                            <th>{{ __('messages.extra') }}</th>
                         </tr>
                     </thead>
                 </table>
@@ -62,7 +62,7 @@
                     <div class="modal-dialog modal-lg" role="document">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title">Webhook Data</h5>
+                                <h5 class="modal-title">{{ __('messages.webhook_data') }} </h5>
                                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                                     <span aria-hidden="true">&times;</span>
                                 </button>
@@ -71,7 +71,7 @@
                                 <pre id="modalDataContent"></pre>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{ __('messages.close') }}</button>
                             </div>
                         </div>
                     </div>

@@ -96,6 +96,11 @@ return [
     */
 
     'fallback_locale' => 'en',
+    'available_locales' => [
+        'en' => 'English',
+        'es' => 'Spanish',
+        'fr' => 'French',
+    ],
 
     /*
     |--------------------------------------------------------------------------

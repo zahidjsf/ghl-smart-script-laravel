@@ -8,7 +8,7 @@
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2><strong>Location Connections</strong></h2>
+                <h2><strong>{{ __('messages.location_connection') }}</strong></h2>
             </div>
         </div>
     </div>
@@ -26,9 +26,9 @@
 
                 <div id="loading-locations" class="text-center py-3">
                     <div class="spinner-border text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                        <span class="visually-hidden">{{ __('messages.loading_loc') }}</span>
                     </div>
-                    <p>Loading locations...</p>
+                    <p>{{ __('messages.loading_loc') }}</p>
                 </div>
 
                 <div id="progress-container" style="display: none; margin-top: 10px;">
@@ -42,7 +42,7 @@
                     @csrf
 
                     <div class="form-group col-md-6 col-lg-3">
-                        <button type="button" id="submit-btn" class="btn btn-primary" disabled>Connect Location</button>
+                        <button type="button" id="submit-btn" class="btn btn-primary" disabled>{{ __('messages.connect_location') }}</button>
                     </div>
                     <br>
 

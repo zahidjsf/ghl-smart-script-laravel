@@ -78,6 +78,7 @@ class FrontController extends Controller
 
         $account->agency_name = $request->agency_name;
         $account->agency_url = $request->agency_url;
+        $account->locale = $request->locale;
 
         if ($request->has('password') && $request->password !== null) {
             $account->password =  Hash::make($request->password);
