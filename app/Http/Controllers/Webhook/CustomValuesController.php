@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Webhook;
 
 use App\Helper\CRM;
 use App\Http\Controllers\Controller;
+use App\Jobs\UpdateGHLCustomValueJob;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\APIWebhook;
@@ -18,7 +19,8 @@ class CustomValuesController extends Controller
     public function webhookCustomValues(Request $request)
     {
         $jsonText = $request->json()->all() ?: $request->all();
-        $locId = $request->input('location', $jsonText['location']['id'] ?? null);
+        $locId = $jsonText['location']['id'] ?? null;
+        // $locId = $request->input('location') ??$jsonText['location']['id'] ?? null;
 
         if (!$locId) {
             return response()->json(['error' => 'Location ID is required'], 400);
@@ -75,12 +77,12 @@ class CustomValuesController extends Controller
         $phone = $hookData->phone ?? '';
         $type = $webhook->type;
         // Get collection assignments
-        $collections = CollectionAssign::where('proj_id', 7)->where('loc_id', $location->loc_id)->get();
+        $collections = CollectionAssign::where('proj_id', 7)->where('loc_id', $location->id)->get();
         if ($collections->isEmpty()) {
             $error = "No collection assigned to location";
             $this->markWebhookFailed($webhook, $error);
             $this->sendNotification($account->email, "UPDATE CV: Collection Error", $error);
-            return;
+            return $error;
         }
 
         // Get custom values
@@ -109,14 +111,14 @@ class CustomValuesController extends Controller
 
         // Prepare updates
         $updates = [];
-        foreach ($ghlCustomValues['customValues'] as $ghlValue) {
+        foreach ($ghlCustomValues->customValues as $ghlValue) {
             foreach ($valuesToUpdate as $cv) {
                 if (
-                    str_replace('"', '', $ghlValue['name']) == $cv['name'] ||
-                    str_replace(' ', '', $ghlValue['fieldKey']) == str_replace(' ', '', $cv['mergeKey'])
+                    str_replace('"', '', $ghlValue->name) == $cv['name'] ||
+                    str_replace(' ', '', $ghlValue->fieldKey) == str_replace(' ', '', $cv['mergeKey'])
                 ) {
                     if (!empty($cv['value'])) {
-                        $updates[$ghlValue['id']] = [
+                        $updates[$ghlValue->id] = [
                             'value' => is_array($cv['value']) ? json_encode($cv['value']) : $cv['value'],
                             'name' => $cv['name']
                         ];
@@ -134,7 +136,8 @@ class CustomValuesController extends Controller
 
         // Perform updates
         foreach ($updates as $id => $data) {
-            $this->updateGHLCustomValue($location, $id, $data);
+            UpdateGHLCustomValueJob::dispatch($location, $id, $data)->onQueue(env('WEBHOOK_QUEUE'));
+            // $this->updateGHLCustomValue($location, $id, $data);
         }
         $webhook->update(['status' => 'added']);
     }
@@ -143,9 +146,10 @@ class CustomValuesController extends Controller
     {
         if ($location) {
             $locId = $location->loc_id;
+            $userId = $location->a_id;
             $url = 'locations/' . $locId . '/customValues';
-            $response = CRM::crmV2(LoginUser(true), $url,  'get', '', [], false, $locId);
-            return $response->json();
+            $response = CRM::crmV2($userId, $url,  'get', '', [], false, $locId);
+            return $response;
         }
         return;
     }
@@ -154,11 +158,11 @@ class CustomValuesController extends Controller
     {
 
         $locationId = $location->loc_id;
-        $userId = LoginUser(true);
+        $userId = $location->a_id;
         $url = 'locations/' . $locationId . '/customValues/' . $cvId;
         $response = CRM::crmV2($userId, $url, 'put', $data, [], false, $locationId);
 
-        if (!$response->successful()) {
+        if (!$response &&  !property_exists($response, 'customValue')) {
             Log::error("Failed to update GHL custom value", [
                 'location_id' => $location->id,
                 'custom_value_id' => $cvId,
@@ -166,7 +170,7 @@ class CustomValuesController extends Controller
             ]);
         }
 
-        return $response->successful();
+        return $response;
     }
 
     protected function markWebhookFailed($webhook, $error)
