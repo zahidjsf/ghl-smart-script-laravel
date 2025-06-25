@@ -8,7 +8,7 @@
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2><strong>Edit Collection: {{ $collection->name }}</strong></h2>
+                <h2><strong>{{ __('messages.edit_collection') }}: {{ $collection->name }}</strong></h2>
             </div>
         </div>
     </div>

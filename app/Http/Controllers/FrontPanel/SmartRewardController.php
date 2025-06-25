@@ -50,11 +50,11 @@ class SmartRewardController extends Controller
             $limit = "full";
             $creditsused = __('messages.cred_used');
             $more = __('messages.more_cred_used');
-            $licenseMsg = "<strong>". $creditsused . "</strong> " . $numLocations . " of " . $numLicenses . "<br/><span class='red'>". $more ."</span>";
+            $licenseMsg = "<strong>" . $creditsused . "</strong> " . $numLocations . " of " . $numLicenses . "<br/><span class='red'>" . $more . "</span>";
         } else {
             $limit = "active";
             $text = __('messages.lic_used');
-            $licenseMsg = "<strong>".$text ."</strong> " . $numLocations . " of " . $numLicenses;
+            $licenseMsg = "<strong>" . $text . "</strong> " . $numLocations . " of " . $numLicenses;
         }
 
         return view('frontpanel.smartreward.index', get_defined_vars());
@@ -63,29 +63,26 @@ class SmartRewardController extends Controller
 
     public function getLocations()
     {
-
         $authUser = LoginUser();
         $user_id = $authUser->id;
 
         $locations = Location::where(['a_id' => $user_id, 'proj_id' => 2]);
+
         return DataTables::of($locations)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $html = '<a href="' . route('frontend.smart_reward.cv_smartreward', ['id' => $row->id]) . '" class="btn btn-sm btn-primary">Custom Values</a> ';
+                $html = '<a href="' . route('frontend.smart_reward.cv_smartreward', ['id' => $row->id]) . '" class="btn btn-sm btn-primary">' . __('messages.custom_values') . '</a> ';
 
-                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'edit_details']) . '" class="btn btn-sm btn-secondary load-license-modal">Edit Details</a>';
+                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'edit_details']) . '" class="btn btn-sm btn-secondary load-license-modal">' . __('messages.edit_details') . '</a>';
 
+                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'settings']) . '" class="btn btn-sm btn-success load-setting-modal">' . __('messages.settings') . '</a>';
 
-                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'settings']) . '" class="btn btn-sm btn-success load-setting-modal">Settings</a>';
+                $html .= '<a href="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'manage_rewards']) . '" class="btn btn-sm btn-warning">' . __('messages.manage_rewards') . '</a> ';
 
-                $html .= '<a href="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'manage_rewards']) . '" class="btn btn-sm btn-warning">Manage Rewards</a> ';
-
-                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'remove']) . '" class="btn btn-sm btn-danger remove-location">Remove</a>';
-
+                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.action_manage', ['id' => $row->id, 'action' => 'remove']) . '" class="btn btn-sm btn-danger remove-location">' . __('messages.remove') . '</a>';
 
                 return $html;
             })
-
             ->rawColumns(['action'])
             ->make(true);
     }

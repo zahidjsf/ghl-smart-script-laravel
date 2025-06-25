@@ -163,7 +163,7 @@ $c = 0;
                     <input type="text" name="cv[{{ $i }}][sort_order]" size="4" value="{{ $sort }}"
                         data-index="{{ $i }}"
                         onchange="autoCheck(this);"
-                        onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();"/>
+                        onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" />
                     <br /><small>Used when using the Power Tools Custom Values Updater Form</small>
                 </div>
             </td>

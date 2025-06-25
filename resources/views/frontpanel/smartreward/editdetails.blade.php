@@ -3,7 +3,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Update Location Data - {{ $location->name }}</h4>
+                <h4 class="modal-title">{{ __('messages.update_loc_data') }} - {{ $location->name }}</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true"></span>
                 </button>
@@ -14,12 +14,12 @@
                     @csrf
                     <div class="form-group">
                         <input type="hidden" value="{{ $location->id }}" name="loc_id">
-                        <label for="licenses-{{ $location->id }}">Name</label>
+                        <label for="licenses-{{ $location->id }}">{{ __('messages.name') }}</label>
                         <input type="text" class="form-control" id="licenses-{{ $location->id }}" name="name"
                             value="{{ $location->name }}">
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary update-location">Save changes</button>
+                        <button type="submit" class="btn btn-primary update-location">{{ __('messages.save') }}</button>
                     </div>
                 </form>
             </div>

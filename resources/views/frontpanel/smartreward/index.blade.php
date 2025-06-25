@@ -54,18 +54,18 @@
     </div>
 
     @verbatim
-        <div class="form-group center codesection" style="display:none; margin:0;">
-            <label> {{ __('messages.leaderboard_custom_menu') }}</label>
-            <small class="form-text text-muted">{{ __('messages.paste_leaderboard_link') }}</small>
+    <div class="form-group center codesection" style="display:none; margin:0;">
+    <label> Leaderboard Custom Menu Link:</label>
+    <small class="form-text text-muted">Paste this link into custom menu links to display the Rewards Leaderboard</small>
 
-            <div class="input-group mt-2">
-                <input type="text" class="form-control" id="leaderboardLink" readonly
-                    value="https://api.ghlsmartscripts.com/Rewards/getRewardsLeaderboardData.php?location={{ location . id }}">
-                <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" onclick="copyLeaderboardLink()">{{ __('messages.copy') }}</button>
-                </div>
-            </div>
+    <div class="input-group mt-2">
+        <input type="text" class="form-control" id="leaderboardLink" readonly
+            value="https://api.ghlsmartscripts.com/Rewards/getRewardsLeaderboardData.php?location=@{{ location.id }}">
+        <div class="input-group-append">
+            <button class="btn btn-outline-secondary" type="button" onclick="copyLeaderboardLink()">Copy</button>
         </div>
+    </div>
+</div>
     @endverbatim
 
     <div class="col-lg-12 center snapshotSection" style="display:none; margin:0 0 15px 0;">
@@ -217,12 +217,6 @@
             });
         });
 
-
-
-
-
-
-
         // Use event delegation for dynamically loaded elements
         $(document).on('click', '.load-license-modal', function(e) {
 
@@ -251,13 +245,13 @@
             e.preventDefault();
 
             Swal.fire({
-                title: 'Are you sure?',
-                text: "This action cannot be undone!",
+                title: '{{ __("messages.are_you_sure") }}',
+                text: '{{ __("messages.delete_confirm_text") }}',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
                 cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Yes, delete it!'
+                 confirmButtonText: '{{ __("messages.delete_confirm_button") }}',
             }).then((result) => {
                 if (result.isConfirmed) {
 

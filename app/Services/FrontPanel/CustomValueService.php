@@ -22,10 +22,10 @@ class CustomValueService
         return DataTables::of($collections)
             ->addIndexColumn()
             ->addColumn('action', function ($row) {
-                $html = '<a href="' . route('frontend.smart_reward.editcollection', ['id' => $row->id]) . '" class="btn btn-sm btn-primary">Edit Collection</a> ';
-                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.copycollection', ['id' => $row->id]) . '" class="btn btn-sm btn-success duplicate-collection">Copy</a>';
+                $html = '<a href="' . route('frontend.smart_reward.editcollection', ['id' => $row->id]) . '" class="btn btn-sm btn-primary">' . __('messages.edit_collection') . '</a> ';
+                $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.copycollection', ['id' => $row->id]) . '" class="btn btn-sm btn-success duplicate-collection">' . __('messages.copy') . '</a>';
                 if ($row->locked !== 'yes') {
-                    $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.removecollection', ['id' => $row->id]) . '" class="btn btn-sm btn-danger remove-collection">Remove</a>';
+                    $html .= '<a style="margin-right:4px" href="#" data-url="' . route('frontend.smart_reward.removecollection', ['id' => $row->id]) . '" class="btn btn-sm btn-danger remove-collection">' . __('messages.remove') . '</a>';
                 }
                 return $html;
             })
@@ -110,7 +110,7 @@ class CustomValueService
                 $cvData['col_id'] = $collection->id;
                 $cvData['a_id'] = $data['a_id'] ?? LoginUser(true);
                 $this->customValueRepository->updateCustomValue($cvData['cv_id'] ?? null, $cvData);
-            }else{
+            } else {
                 $delCV = CustomValue::where('id', $cvData['cv_id'])->first();
                 $delCV->delete();
             }

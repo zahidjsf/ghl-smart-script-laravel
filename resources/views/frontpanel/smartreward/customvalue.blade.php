@@ -9,6 +9,11 @@
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
                 <h2><strong>{{ __('messages.smart_rewards') }}</strong></h2>
+                <div>
+                    <a href="javascript:history.back()" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left me-2"></i> {{ __('messages.go_back') }}
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -49,14 +54,14 @@
                 <form id="customValuesForm" action="{{ route('frontend.smart_reward.custom_values_update', $location->id) }}" method="POST" role="form" enctype="multipart/form-data">
                     @csrf
                     <div class="d-flex justify-content-end mb-3">
-                        <button type="submit" name="submit" class="btn btn-primary btn-lg fw-bold">Update Custom Values</button>
+                        <button type="submit" name="submit" class="btn btn-primary btn-lg fw-bold">{{ __('messages.update_cv') }}</button>
                     </div>
                     <div class="table-responsive">
                         <table class="table table-hover">
                             <thead class="table-light">
                                 <tr>
-                                    <th class="w-25">Name</th>
-                                    <th>Value</th>
+                                    <th class="w-25">{{ __('messages.name') }}</th>
+                                    <th>{{ __('messages.value') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -84,7 +89,7 @@
                                             </div>
                                             @endif
                                             <input type="text" class="form-control mb-2" name="IMAGE-{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}" value="{{ $input['val'] }}">
-                                            <label class="form-label">Select Image To Upload</label>
+                                            <label class="form-label">{{ __('messages.select_image') }}</label>
                                             <input type="file" class="form-control" name="{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}">
                                         </div>
                                         @elseif($input['fieldtype'] == "revLogo")
@@ -97,14 +102,14 @@
                                             <input type="text" class="form-control mb-2" name="IMAGE-{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}" value="{{ $input['val'] }}">
                                             <div class="row mb-2">
                                                 <div class="col-md-6">
-                                                    <label class="form-label">Select Review Site From List</label>
+                                                    <label class="form-label"> {{ __('messages.review_site') }}</label>
                                                     <select class="form-select" name="ALT-{{ $input['id'] }}||{{ $input['name'] }}">
                                                         <option value="">Select...</option>
                                                         {!! $input['revOptions'] ?? '' !!}
                                                     </select>
                                                 </div>
                                                 <div class="col-md-6">
-                                                    <label class="form-label">Select Image To Upload</label>
+                                                    <label class="form-label">{{ __('messages.select_image') }}</label>
                                                     <input type="file" class="form-control" name="{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}">
                                                 </div>
                                             </div>
@@ -117,12 +122,12 @@
                                             </div>
                                             @endif
                                             <input type="text" class="form-control mb-2" name="IMAGE-{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}" value="{{ $input['val'] }}">
-                                            <label class="form-label">Select Image To Upload</label>
+                                            <label class="form-label">{{ __('messages.select_image') }}</label>
                                             <input type="file" class="form-control" name="{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}">
                                         </div>
                                         @elseif($input['fieldtype'] == "file")
                                         <div class="mb-3">
-                                            <label class="form-label">Select File To Upload</label>
+                                            <label class="form-label">{{ __('messages.select_file') }}</label>
                                             <input type="file" class="form-control" name="{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}">
                                         </div>
                                         @elseif($input['fieldtype'] == "paragraph")
@@ -138,11 +143,11 @@
                                             <div class="form-check form-switch">
                                                 <input type="hidden" value="No" name="{{ $input['id'] }}||{{ $input['name'] }}">
                                                 <input class="form-check-input" type="checkbox" role="switch" name="{{ $input['id'] }}||{{ $input['name'] }}" id="{{ $input['id'] }}" value="yes" {{ $input['checked'] ?? '' }}>
-                                                <label class="form-check-label" for="{{ $input['id'] }}">Turn On</label>
+                                                <label class="form-check-label" for="{{ $input['id'] }}">{{ __('messages.turn_on') }}</label>
                                             </div>
                                         </div>
                                         @endif
-                                        <small class="text-muted"><span class="fw-semibold">What This Updates:</span> {{ $input['tooltip'] }}</small>
+                                        <small class="text-muted"><span class="fw-semibold">{{ __('messages.what_update') }} </span> {{ $input['tooltip'] }}</small>
                                     </td>
                                 </tr>
                                 @endforeach
@@ -154,7 +159,7 @@
                     </div>
                     <input type="hidden" name="locid" value="{{ $location->id }}" />
                     <div class="d-flex justify-content-end mt-3">
-                        <button type="submit" name="submit" class="btn btn-primary btn-lg fw-bold">Update Custom Values</button>
+                        <button type="submit" name="submit" class="btn btn-primary btn-lg fw-bold">{{ __('messages.update_cv') }}</button>
                     </div>
                 </form>
             </div>
@@ -166,28 +171,48 @@
 @section('js-script-add')
 <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.js"></script>
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     $(document).ready(function() {
         // Initialize summernote editors
         @foreach($inputs as $input)
-            @if($input['fieldtype'] == "paragraph")
-            $('#summernote{{ $loop->index }}').summernote({
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline']],
-                    ['font', ['strikethrough', 'superscript', 'subscript']],
-                    ['fontsize', ['fontsize']],
-                    ['para', ['ul', 'ol', 'paragraph']],
-                    ['height', ['height']]
-                ],
-                height: 200
-            });
-            @endif
+        @if($input['fieldtype'] == "paragraph")
+        $('#summernote{{ $loop->index }}').summernote({
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline']],
+                ['font', ['strikethrough', 'superscript', 'subscript']],
+                ['fontsize', ['fontsize']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['height', ['height']]
+            ],
+            height: 200
+        });
+        @endif
         @endforeach
 
         // Initialize tooltips
         const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-        const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
             return new bootstrap.Tooltip(tooltipTriggerEl);
+        });
+        // Handle form submission with SweetAlert
+        $('#customValuesForm').on('submit', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: '{{ __("messages.are_you_sure") }}',
+                text: '{{ __("messages.confirm_update_cv") }}',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '{{ __("messages.yes_update") }}',
+                cancelButtonText: '{{ __("messages.cancel") }}'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, submit the form
+                    this.submit();
+                }
+            });
         });
     });
 </script>

@@ -8,7 +8,7 @@
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2><strong>Create New Collection</strong></h2>
+                <h2><strong>{{ __('messages.create_collection') }}</strong></h2>
             </div>
         </div>
     </div>
@@ -40,43 +40,43 @@
         @csrf
         <div class="row">
             <div class="form-group col-md-6">
-                <label for='locations'>Select Location To Grab Custom Values From</label><br />
+                <label for='locations'>{{ __('messages.location_cv') }}</label><br />
                 <select id='locations' name='locations' class="form-control">
-                    <option value="">Select A Location</option>
+                    <option value=""> {{ __('messages.select_location') }}</option>
                     @foreach ($agencyLocations as $location)
                     <option data-user-id="{{$location->a_id}}" data-location-id="{{$location->loc_id}}" value="{{ $location->id }}|{{ $location->loc_id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="form-group col-md-6">
-                <label for='cf_loc'>Grab Custom Fields From Another Location</label><br />
+                <label for='cf_loc'> {{ __('messages.location_cf') }}</label><br />
                 <select id='cf_loc' name='cf_loc' class="form-control">
-                    <option data-cf-location-id="0" value="0" selected >Same Location As Custom Values Above</option>
+                    <option data-cf-location-id="0" value="0" selected >{{ __('messages.same_cv_above') }}</option>
                     @foreach ($agencyLocations as $location)
                     <option data-cf-location-id="{{$location->loc_id}}" value="{{ $location->loc_id }}">{{ $location->name }}</option>
                     @endforeach
                 </select>
-                Select the location where you will have your client fill out the form to update the custom values.
+                {{ __('messages.location_cf_desc') }}
+
             </div>
         </div>
         <br>
         <div class="form-group text-end" id="getFieldsBtnWrapper" hidden>
-            <a class="btn btn-primary" id="get-custom-values">Get Custom Values</a>
+            <a class="btn btn-primary" id="get-custom-values">{{ __('messages.get_cvs') }}</a>
         </div>
         <div class="form-group">
-            <label for="col_name">Collection Name</label>
+            <label for="col_name">{{ __('messages.collection_name') }}</label>
             <input type="text" class="form-control" id="col_name" name="collection_name" value="" placeholder="Enter Collection Name">
         </div>
         <br>
         <div class="form-group">
-            <label for="textarea" class=" control-label">Description</label>
+            <label for="textarea" class=" control-label">{{ __('messages.description') }}</label>
             <textarea name="collection_description" id="textarea" class="form-control" rows="3"></textarea>
         </div>
         <br>
         <div id="customValuesContainer"></div>
         <div class="modal-footer">
-            <button type="submit" name="insert" class="btn btn-primary add-location">Save
-                changes</button>
+            <button type="submit" name="insert" class="btn btn-primary add-location">{{ __('messages.save') }}</button>
         </div>
     </form>
 
@@ -109,8 +109,6 @@
             }
             var userId = selectedOption.data('user-id');
 
-            console.log('Location ID:', locationId);
-            console.log('User ID:', userId);
             var url = '{{ url("smart-reward/get-customvalues") }}/' + locationId + '?user_id=' + userId+'&cf_location_id='+cfLocationId;
             $.ajax({
                 url:url,

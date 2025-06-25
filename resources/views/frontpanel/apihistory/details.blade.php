@@ -45,8 +45,8 @@
                 <table id="Yajra-dataTable" class="table table-bordered table-striped">
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>{{ __('messages.location_id') }} </th>
+                            <th>{{ __('messages.id') }}</th>
+                            <th>{{ __('messages.loc_id') }} </th>
                             <th>{{ __('messages.webhook_data') }}</th>
                             <th>{{ __('messages.status') }}</th>
                             <th>{{ __('messages.date') }}</th>
