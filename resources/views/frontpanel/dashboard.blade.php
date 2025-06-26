@@ -3,288 +3,249 @@
 @section('content')
 @section('select_dashboard', 'active')
 
+<link rel="stylesheet" href="{{ asset('frontpanel/assets/css/dashboard.css') }}">
 
-<div class="container-fluid" style="padding:0 1.5rem">
+<div class="container-fluid dashboard-container">
     <!-- start page title -->
     <div class="row g-0">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h2>Dashboard<strong> - Welcome back, {{ LoginUser()->fName }} {{ LoginUser()->lName }} From
-                        {{ LoginUser()->agency_name }}!</strong></h2>
+                <h2 class="dashboard-title">
+                    <strong>{{ __('messages.dashboard') }}</strong> -
+                    {{ __('messages.welcome_back') }}, {{ LoginUser()->fName }} {{ LoginUser()->lName }}
+                    {{ __('messages.from') }} {{ LoginUser()->agency_name }}!
+                </h2>
             </div>
         </div>
     </div>
 
     @if(session('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success alert-dashboard">
             {{ session('success') }}
         </div>
     @endif
 
-    <!-- end page title -->
+    <!-- Account Setup Section -->
     @if (empty($authUser->agency_name))
-        <div class="container" style="margin-bottom:150px;">
-            <div class="row justify-content-md-center">
-                <div class="col-md-12 center">
-                    <div class="col-md-10">
-                        <!-- Put Form Here -->
-                        <h1> Set Up Your GHL Power Tools Account </h1>
-                        <p>Looks like there are a few things we need to do in order to finish setting up your account.
-                        </p>
+        <div class="account-setup-container">
+            <div class="row justify-content-center">
+                <div class="col-md-10 setup-box">
+                    <h1 class="setup-title">{{ __('messages.setup_account') }}</h1>
+                    <p class="setup-description">{{ __('messages.account_setup_description') }}</p>
 
-                        <div>
-                            <iframe width="560" height="315" src="{{ get_default_settings('setup_video') }}"
-                                title="YouTube video player" frameborder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                        </div>
+                    <div class="setup-video-container">
+                        <iframe class="setup-video" src="{{ get_default_settings('setup_video') }}"
+                                title="{{ __('messages.setup_video_title') }}" allowfullscreen></iframe>
+                    </div>
 
-                        @if ($authUser->oauth == 0 && $authUser->account_type != 'starter')
-                            @php
-                                $aid = $authUser->id ?? session('id');
-                                $state = 'aid-' . $aid;
-                            @endphp
-                            <div class="col-12">
-                                <h3>Step 1: Connect Your Agency API</h3>
-                                <a class="btn btn-warning"
-                                    style="width:300px; padding:15px; margin-bottom:10px; color:#9b3911; font-weight:bold; font-size:24px;"
-                                    href="{{ $connecturl }}"
-                                    target="_blank">Connect API V2</a>
-                                <br /> By authorizing API V2 Your new accounts in Smart Scripts / Power Tools will use
-                                the new API
-                                <!-- Button trigger modal -->
-                                <br>Click Here for instructions: <a class="" data-toggle="modal"
-                                    data-target="#modelId">
-                                    Open Video
-                                </a>
+                    @if ($authUser->oauth == 0 && $authUser->account_type != 'starter')
+                        <div class="api-connect-section">
+                            <h3>{{ __('messages.step') }} 1: {{ __('messages.connect_api') }}</h3>
+                            <a class="btn btn-warning api-connect-btn" href="{{ $connecturl }}" target="_blank">
+                                {{ __('messages.connect_api_v2') }}
+                            </a>
+                            <p class="api-connect-note">{{ __('messages.api_connect_description') }}</p>
 
-                                <!-- Modal -->
-                                <div class="modal fade" id="modelId" tabindex="-1" role="dialog"
-                                    aria-labelledby="modelTitleId" aria-hidden="true">
-                                    <div class="modal-dialog" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title">How to Authorize API V2 for GHL Power Tools</h5>
-                                                <button type="button" class="close" data-dismiss="modal"
-                                                    aria-label="Close">
-                                                    <span aria-hidden="true">&times;</span>
-                                                </button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <iframe width="550" height="300"
+                            <a class="video-instruction-link" data-toggle="modal" data-target="#apiVideoModal">
+                                <i class="bi bi-play-circle"></i> {{ __('messages.watch_instructions') }}
+                            </a>
+
+                            <!-- API Video Modal -->
+                            <div class="modal fade" id="apiVideoModal" tabindex="-1" role="dialog" aria-hidden="true">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title">{{ __('messages.api_authorization_guide') }}</h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                <span aria-hidden="true">&times;</span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="embed-responsive embed-responsive-16by9">
+                                                <iframe class="embed-responsive-item"
                                                     src="{{ get_default_settings('authorize_v2_video') }}"
-                                                    title="YouTube video player" frameborder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                    referrerpolicy="strict-origin-when-cross-origin"
                                                     allowfullscreen></iframe>
                                             </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary"
-                                                    data-dismiss="modal">Close</button>
-                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-dismiss="modal">
+                                                {{ __('messages.close') }}
+                                            </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <hr style="border-bottom:2px dotted #000000;">
-                        @endif
+                        </div>
+                        <hr class="section-divider">
+                    @endif
 
-                        <form action="{{ route('frontend.agencyUpdate') }}" method="POST" role="form">
-                            @csrf
-                            <h3>Step 2: Add Agency Details</h3>
-                            <p>Let's fill out the form below.</p>
-                            <div class="form-group">
-                                <label for="">Agency Name</label>
-                                <input type="text" class="form-control" name="agency_name" id=""
-                                    aria-describedby="helpId" placeholder="" value="{{ $authUser->agency_name ?? '' }}">
-                                <small id="helpId" class="form-text text-muted">Agency Name</small>
-                            </div>
-                            <div class="form-group">
-                                <label for="accountType">GHL Account Type</label>
-                                <select name="accountType" id="accountT" class="form-control" required="required">
-                                    <option value="select">Select Account Type</option>
-                                    <option value="agency_pro"
-                                        {{ $authUser->account_type == 'agency_pro' ? 'selected' : '' }}>SAAS / Agency
-                                        Pro $497</option>
-                                    <option value="freelancer"
-                                        {{ $authUser->account_type == 'freelancer' ? 'selected' : '' }}>Freelancer /
-                                        Agency Unlimited $297</option>
-                                    <option value="starter"
-                                        {{ $authUser->account_type == 'starter' ? 'selected' : '' }}>Starter Account $97
-                                    </option>
-                                </select>
-                            </div>
+                    <form action="{{ route('frontend.agencyUpdate') }}" method="POST" class="agency-setup-form">
+                        @csrf
+                        <h3>{{ __('messages.step') }} 2: {{ __('messages.add_agency_details') }}</h3>
+                        <p class="form-description">{{ __('messages.fill_form_below') }}</p>
 
-                            <div class="form-group">
-                                <label for="">Agency App URL</label>
-                                <input type="text" class="form-control" name="agency_app_url" id=""
-                                    aria-describedby="helpId" placeholder="" value="{{ $authUser->agency_url ?? '' }}">
-                                <small id="helpId" class="form-text text-muted">Agency App URL - Your whitelabel
-                                    domain you use to log into high level with: IE: https://app.gohighlevel.com, or
-                                    https://app.freshleads.com etc.</small>
-                            </div>
-                            <input type="hidden" name="id" value="{{ $authUser->id }}">
+                        <div class="form-group">
+                            <label for="agency_name">{{ __('messages.agency_name') }}</label>
+                            <input type="text" class="form-control" name="agency_name" id="agency_name"
+                                   value="{{ $authUser->agency_name ?? '' }}">
+                            <small class="form-text text-muted">{{ __('messages.agency_name_help') }}</small>
+                        </div>
 
-                            <button type="submit" name="submit_setup" class="btn btn-primary">Submit</button>
-                        </form>
-                    </div>
+                        <div class="form-group">
+                            <label for="accountType">{{ __('messages.ghl_account_type') }}</label>
+                            <select name="accountType" id="accountT" class="form-control" required>
+                                <option value="select">{{ __('messages.select_account_type') }}</option>
+                                <option value="agency_pro" {{ $authUser->account_type == 'agency_pro' ? 'selected' : '' }}>
+                                    {{ __('messages.agency_pro') }}
+                                </option>
+                                <option value="freelancer" {{ $authUser->account_type == 'freelancer' ? 'selected' : '' }}>
+                                    {{ __('messages.freelancer') }}
+                                </option>
+                                <option value="starter" {{ $authUser->account_type == 'starter' ? 'selected' : '' }}>
+                                    {{ __('messages.starter_account') }}
+                                </option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="agency_app_url">{{ __('messages.agency_app_url') }}</label>
+                            <input type="text" class="form-control" name="agency_app_url" id="agency_app_url"
+                                   value="{{ $authUser->agency_url ?? '' }}">
+                            <small class="form-text text-muted">{{ __('messages.agency_url_help') }}</small>
+                        </div>
+
+                        <input type="hidden" name="id" value="{{ $authUser->id }}">
+                        <button type="submit" name="submit_setup" class="btn btn-primary submit-btn">
+                            {{ __('messages.submit') }}
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
     @endif
 
-
-    <div class="row justify-content-md-center">
-        <div class="col-md-5">
-            <div class="row">
-                <div class="col-md-12">
-                    <h2>Tools - Quick Access</h2>
+    <!-- Main Dashboard Content -->
+    <div class="row dashboard-content">
+        <!-- Left Column - Tools and News -->
+        <div class="col-lg-7 col-xl-8">
+            <!-- Tools Section -->
+            <div class="dashboard-card tools-section">
+                <h2 class="section-title">{{ __('messages.tools_quick_access') }}</h2>
+                <div class="row tools-grid">
+                    @foreach ($projects as $project)
+                        <div class="col-6 col-md-4 tool-item">
+                            <a href="{{ $project['url'] }}?licensekey={{ LoginUser()->licensekey }}"
+                               class="btn btn-grad tool-btn">
+                                {{ $project['name'] }}
+                            </a>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-            <div class="row" style="margin-top:15px;">
-                @foreach ($projects as $project)
-                    <div class="col-md-4">
-                        <a href="{{ $project['url'] }}?licensekey={{ LoginUser()->licensekey }}" type="button"
-                            class="btn btn-grad "
-                            style="padding:15px; font-size:16px; font-weight:700;">{{ $project['name'] }}</a>
-                    </div>
-                @endforeach
+
+            <!-- News & Updates Section -->
+            <div class="dashboard-card news-section">
+                <h2 class="section-title">{{ __('messages.news_updates') }}</h2>
+                <div class="row news-grid">
+                    @foreach ($articles as $index => $article)
+                        <div class="col-md-6 col-lg-4 news-item">
+                            <div class="news-card">
+                                <div class="card-body">
+                                    <h4 class="news-title">{{ $article['content']['title'] }}</h4>
+                                    <p class="news-excerpt">
+                                        {{ Str::limit(strip_tags($article['content']['description']), 200) }}...
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                </div>
             </div>
 
-            <div class="row" style="margin-top:25px; padding-top:10px; border-top:2px dashed #b4b4b4;">
-                <div class="col-md-12">
-                    <h2 style="border:none; padding-bottom:0px;"> News & Updates </h2>
+            <!-- Review Stats (Conditional) -->
+            @if (in_array(LoginUser(true), [10, 1]) && LoginUser()->SMART_Reviews)
+                @php
+                    $accountLocations = getAccountLocations(LoginUser(true), 1);
+                    $totalRevReq = 0;
+                    foreach ($accountLocations as $location) {
+                        $totalRevReq += getRevReqByLoc($location['loc_id']);
+                    }
+                @endphp
+
+                <div class="dashboard-card review-stats">
+                    <h2 class="section-title">{{ __('messages.review_stats') }}</h2>
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-title">{{ __('messages.review_requests') }}</div>
+                            <div class="stat-period">{{ __('messages.last_30_days') }}</div>
+                            <div class="stat-value">{{ $totalRevReq }}</div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        </div>
+
+        <!-- Right Column - Sidebar -->
+        <div class="col-lg-5 col-xl-4 sidebar">
+            <!-- What's New Section -->
+            <div class="sidebar-card">
+                <h2 class="sidebar-title">{{ __('messages.whats_new') }}</h2>
+
+                <!-- Slack Card -->
+                <div class="feature-card slack-card">
+                    <h4>{{ __('messages.join_slack') }}</h4>
+                    <a href="{{ get_default_settings('slack_join_link') }}" target="_blank">
+                        <img src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg"
+                             alt="Slack Logo" class="slack-logo">
+                    </a>
                 </div>
 
-                @foreach ($articles as $index => $article)
-                    @if ($index % 3 == 0)
-                        <div class="row">
-                    @endif
-
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="card-title">
-                                    <h4>{{ $article['content']['title'] }}</h4>
-                                </div>
-                                <div class="card-body justify">
-                                    {{ Str::limit(strip_tags($article['content']['description']), 200) }}...
-                                </div>
-                                <!-- ('frontend.articles', ['id' => $article['_id'], 'licensekey' => LoginUser()->licensekey]) -->
-                                <!-- <div class="card-footer" style="margin-top:15px;">
-                                    <a href=""
-                                        type="button" class="btn btn-primary">Read More</a>
-                                </div> -->
-                            </div>
-                        </div>
+                <!-- Support Calls Card -->
+                <div class="feature-card support-card">
+                    <h3>{{ __('messages.join_support_calls') }}</h3>
+                    <div class="support-schedule">
+                        <strong>{{ get_default_settings('weekly_call_day') }}</strong><br>
+                        <strong>{{ get_default_settings('weekly_call_time') }}</strong>
                     </div>
+                    <a href="{{ get_default_settings('weekly_support_link') }}" target="_blank" class="support-link">
+                        {{ __('messages.join_call') }}
+                    </a>
+                </div>
 
-                    @if (($index % 3 == 2) || ($loop->last))
+                <!-- API V2 Section (Conditional) -->
+                @if (LoginUser()->oauth == 0 && LoginUser()->account_type != 'starter')
+                    <div class="feature-card api-card">
+                        <h4>{{ __('messages.authorize_api_v2') }}</h4>
+                        <div class="video-container">
+                            <iframe src="https://www.youtube.com/embed/arYSCfQZlP4?si=RbTlRim8KPoWL_-l"
+                                    title="{{ __('messages.api_video_title') }}" allowfullscreen></iframe>
                         </div>
-                    @endif
-                @endforeach
-            </div>
-
-            @if (in_array(LoginUser(true), [10, 1]))
-                @if (LoginUser()->SMART_Reviews)
-                    @php
-                        $accountLocations = getAccountLocations(LoginUser(true), 1);
-                        $totalRevReq = 0;
-
-                        foreach ($accountLocations as $location) {
-                            $totalRevReq += getRevReqByLoc($location['loc_id']);
-                        }
-                    @endphp
-
-                    <div class="row block">
-                        <div class="col">
-                            <h2 style="padding-top:0px;">Review Stats</h2>
-                        </div>
-
-                        <div class="col-md-12" style="margin-top:25px;">
-                            <div class="col-md-4">
-                                <div class="card ">
-                                    <div class="card-body">
-                                        <div class="card-title"><span
-                                                style="font-size:18px; margin-bottom:0px; padding-bottom:0px; font-weight:700;">Review
-                                                Requests</span><br />Last 30 Days</div>
-                                        <div class="card-body center">
-                                            <h1 class="center">{{ $totalRevReq }}</h1>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4"></div>
-                            <div class="col-md-4"></div>
-                        </div>
+                        <a class="btn btn-warning api-btn" href="{{ $connecturl }}" target="_blank">
+                            {{ __('messages.connect_api_v2') }}
+                        </a>
+                        <p class="api-note">{{ __('messages.api_v2_description') }}</p>
                     </div>
                 @endif
-            @endif
-        </div>
 
-        <div class="col-md-4">
-            <h2>What's New</h2>
-            <div class="card block">
-                <div class="card-body text-center">
-                    <h4>Join Our Slack Channel</h4>
-                    <a href="{{  get_default_settings('slack_join_link') }}"
-                        target="_blank"><img src="https://a.slack-edge.com/bv1-13/slack_logo-ebd02d1.svg"
-                            style="width:100px;"></a>
-                </div>
-            </div>
-            <div class="card block">
-                <div class="card-body">
-                    <h3>Join Our Weekly Support Calls</h3>
-                    <strong>{{  get_default_settings('weekly_call_day') }} <br /> {{  get_default_settings('weekly_call_time') }}</strong><br /><a
-                        href="{{  get_default_settings('weekly_support_link') }}"
-                        target="_blank">{{  get_default_settings('weekly_support_link') }} </a>
-                </div>
-            </div>
-
-            @if (LoginUser()->oauth == 0 && LoginUser()->account_type != 'starter')
-                @php
-                    $aid = LoginUser()->id ?? session('id');
-                    $state = 'aid-' . $aid;
-                @endphp
-                <div class="row">
-                    <div class="col-md-6">
-                        <h4>DO THIS: Authorize API V2 For High Level</h4>
-                        <iframe width="350" height="196"
-                            src="https://www.youtube.com/embed/arYSCfQZlP4?si=RbTlRim8KPoWL_-l"
-                            title="YouTube video player" frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-                        <br />
-                        <a class="btn btn-warning"
-                            href="{{ $connecturl }}"
-                            target="_blank">Connect API V2</a>
-                        <br /> By authorizing API V2 Your new accounts in Smart Scripts / Power Tools will use the new
-                        API
-                    </div>
-                    <div class="col-md-6"></div>
-                </div>
-            @endif
-
-            @if (!LoginUser()->isMember)
-                <h2>Get It All!</h2>
-                {{-- <div class="card">
-                    <div class="card-body"> --}}
-                        <img style="width: 100%;margin-top: 10px;margin-bottom: 10px;border-radius: 0;border-bottom-right-radius: 0;border-top-left-radius: 0;"
-                            src="{{ asset('frontpanel/assets/img/SmartPowerToolsBundle.jpg') }}">
-                        <h3 class="card-title">SMART SCRIPTS</h3>
-                        <h4 class="card-title">Power Tools Bundle</h4>
+                <!-- Power Tools Bundle (Conditional) -->
+                @if (!LoginUser()->isMember)
+                    <div class="feature-card bundle-card">
+                        <h2>{{ __('messages.get_it_all') }}</h2>
+                        <img src="{{ asset('frontpanel/assets/img/SmartPowerToolsBundle.jpg') }}"
+                             alt="Power Tools Bundle" class="bundle-image">
+                        <h3 class="bundle-title">{{ __('messages.smart_scripts') }}</h3>
+                        <h4 class="bundle-subtitle">{{ __('messages.power_tools_bundle') }}</h4>
                         @if (LoginUser()->SMART_Reviews)
-                            <h3>Reviews LTD Owners - Save 40%</h3>
+                            <h3 class="bundle-discount">{{ __('messages.reviews_ltd_discount') }}</h3>
                         @endif
-                        <p class="card-text">Tools, Scripts, Snapshots, and Apps that give you more functionality and
-                            automation inside of High Level. New Apps, Tools, Automations being added monthly.</p>
-                        <a href="https://get.thinkbigstudios.ca/power-tools" class="btn btn-primary" target="_blank"
-                            type="button" style="width: 100%;">Get Access</a>
-                    {{-- </div>
-                </div> --}}
-            @endif
+                        <p class="bundle-description">{{ __('messages.bundle_description') }}</p>
+                        <a href="https://get.thinkbigstudios.ca/power-tools" class="btn btn-primary bundle-btn" target="_blank">
+                            {{ __('messages.get_access') }}
+                        </a>
+                    </div>
+                @endif
+            </div>
         </div>
-
     </div>
 </div>
 

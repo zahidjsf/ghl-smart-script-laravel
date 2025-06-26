@@ -39,9 +39,9 @@
         @csrf
         <div class="row">
             <div class="form-group col-md-6">
-                <label for='locations'>Select Location To Grab Custom Values From</label><br />
+                <label for='locations'>{{ __('messages.location_cv') }}</label><br />
                 <select id='locations' name='locations' class="form-control">
-                    <option value="">Select A Location</option>
+                    <option value="">{{ __('messages.select_location') }}</option>
                     @foreach ($agencyLocations as $location)
                     <option value="{{ $location->id }}|{{ $location->loc_id }}"
                         {{ $collection->orig_loc_id == $location->id ? 'selected' : '' }}
@@ -53,9 +53,9 @@
                 </select>
             </div>
             <div class="form-group col-md-6">
-                <label for='cf_loc'>Grab Custom Fields From Another Location</label><br />
+                <label for='cf_loc'>{{ __('messages.location_cf') }}</label><br />
                 <select id='cf_loc' name='cf_loc' class="form-control">
-                    <option data-cf-location-id="0" value="0" {{ $collection->cf_loc_id == $collection->orig_loc_id ? 'selected' : '' }}>Same Location As Custom Values Above</option>
+                    <option data-cf-location-id="0" value="0" {{ $collection->cf_loc_id == $collection->orig_loc_id ? 'selected' : '' }}>{{ __('messages.same_cv_above') }}</option>
                     @foreach ($agencyLocations as $location)
                     <option data-cf-location-id="{{$location->loc_id}}"
                         value="{{ $location->loc_id }}"
@@ -64,20 +64,20 @@
                     </option>
                     @endforeach
                 </select>
-                Select the location where you will have your client fill out the form to update the custom values.
+                {{ __('messages.location_cf_desc') }}
             </div>
         </div>
         <br>
         <div class="form-group text-end" id="getFieldsBtnWrapper">
-            <a class="btn btn-primary" id="reload-custom-values">Reload Custom Values</a>
+            <a class="btn btn-primary" id="reload-custom-values">{{ __('messages.reload_cv') }}</a>
         </div>
         <div class="form-group">
-            <label for="col_name">Collection Name</label>
-            <input type="text" class="form-control" id="col_name" name="collection_name" value="{{ $collection->name }}" placeholder="Enter Collection Name">
+            <label for="col_name">{{ __('messages.collection_name') }}</label>
+            <input type="text" class="form-control" id="col_name" name="collection_name" value="{{ $collection->name }}" placeholder="Enter {{ __('messages.collection_name') }}">
         </div>
         <br>
         <div class="form-group">
-            <label for="textarea" class=" control-label">Description</label>
+            <label for="textarea" class=" control-label">{{ __('messages.description') }}</label>
             <textarea name="collection_description" id="textarea" class="form-control" rows="3">{{ $collection->description }}</textarea>
         </div>
         <br>
@@ -90,7 +90,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="submit" name="insert" class="btn btn-primary add-location">Update Collection</button>
+            <button type="submit" name="insert" class="btn btn-primary add-location">{{ __('messages.upload_collection') }}</button>
         </div>
     </form>
 </div>

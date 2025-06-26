@@ -110,21 +110,149 @@ return [
     'get_cvs' => 'Get Custom Values',
     'collection_name' => 'Collection Name',
     'duplicate' => 'Duplicate',
+    'add' => 'Add',
+    'custom_field_to_map' => 'Custom Field To Map',
+    'custom_field_tooltip' => 'Select your custom field to map to your custom value.',
+    'custom_field_form_data' => 'Custom Field Form Data',
+    'custom_field_form_tooltip' => 'This is the form field from your location that will update the custom value when updating via webhook.',
+    'advanced' => 'Advanced',
+    'tooltip' => 'Tool Tip',
+    'default_value' => 'Default Value',
+    'field_type' => 'Field Type',
+    'field_type_tooltip' => 'Field type allows you to set the data type of the field.',
+    'text' => 'Text',
+    'yes_no' => 'YES/NO',
+    'paragraph' => 'Paragraph',
+    'image' => 'Image',
+    'logo' => 'Logo',
+    'review_logo' => 'Review Logo',
+    'read_only' => 'Read Only',
+    'wysiwyg' => 'WYSIWYG',
+    'wysiwyg_note' => 'WYSIWYG on Paragraphs Only',
+    'display_order' => 'Display Order',
+    'display_order_note' => 'Used when using the Power Tools Custom Values Updater Form',
+    'resources' => 'Resources',
+    'resources_tooltip' => 'Provide your end user with additional resource links, templates, or downloads',
+    'add_stamps' => 'Add Stamps',
+
+    'dashboard' => 'Dashboard',
+    'welcome_back' => 'Welcome back',
+    'from' => 'From',
+
+    // Account Setup
+    'setup_account' => 'Set Up Your GHL Power Tools Account',
+    'account_setup_description' => 'Looks like there are a few things we need to do in order to finish setting up your account.',
+    'setup_video_title' => 'Account Setup Guide',
+
+    // API Connection
+    'step' => 'Step',
+    'connect_api' => 'Connect Your Agency API',
+    'connect_api_v2' => 'Connect API V2',
+    'api_connect_description' => 'By authorizing API V2 Your new accounts in Smart Scripts / Power Tools will use the new API',
+    'watch_instructions' => 'Open Video',
+    'api_authorization_guide' => 'How to Authorize API V2 for GHL Power Tools',
+
+    // Agency Details Form
+    'add_agency_details' => 'Add Agency Details',
+    'fill_form_below' => 'Let\'s fill out the form below.',
+    'agency_name' => 'Agency Name',
+    'agency_name_help' => 'Your agency or business name',
+    'ghl_account_type' => 'GHL Account Type',
+    'select_account_type' => 'Select Account Type',
+    'agency_pro' => 'SAAS / Agency Pro $497',
+    'freelancer' => 'Freelancer / Agency Unlimited $297',
+    'starter_account' => 'Starter Account $97',
+    'agency_app_url' => 'Agency App URL',
+    'agency_url_help' => 'Your whitelabel domain you use to log into high level',
+    'submit' => 'Submit',
+
+    // Main Dashboard
+    'tools_quick_access' => 'Tools - Quick Access',
+    'news_updates' => 'News & Updates',
+    'review_stats' => 'Review Stats',
+    'review_requests' => 'Review Requests',
+    'last_30_days' => 'Last 30 Days',
+
+    // Sidebar
+    'whats_new' => 'What\'s New',
+    'join_slack' => 'Join Our Slack Channel',
+    'join_support_calls' => 'Join Our Weekly Support Calls',
+    'join_call' => 'Join Call',
+    'authorize_api_v2' => 'DO THIS: Authorize API V2 For High Level',
+    'api_video_title' => 'API V2 Authorization Guide',
+    'api_v2_description' => 'By authorizing API V2 Your new accounts will use the new API',
+
+    // Bundle
+    'get_it_all' => 'Get It All!',
+    'smart_scripts' => 'SMART SCRIPTS',
+    'power_tools_bundle' => 'Power Tools Bundle',
+    'reviews_ltd_discount' => 'Reviews LTD Owners - Save 40%',
+    'bundle_description' => 'Tools, Scripts, Snapshots, and Apps that give you more functionality and automation inside of High Level.',
+    'get_access' => 'Get Access',
+
+    // Modal Title
+    'update_location_data' => 'Update Location Data',
+
+    // Checkbox Options
+    'enable_settings' => 'Enable Settings in Leaderboard',
+    'settings_nav_description' => 'Display Reward Settings In Admin Rewards Nav',
+    'enable_rewards_editor' => 'Enable Rewards Editor in Leaderboard',
+    'rewards_editor_nav_description' => 'Display Reward Item Editor In Admin Rewards Nav',
+    'enable_points_leaderboard' => 'Enable Points Leaderboard in Leaderboard',
+    'points_nav_description' => 'Display Loyalty Points Page In Admin Rewards Nav',
+    'enable_promotions_manager' => 'Enable Promotions Manager in Leaderboard',
+    'promotions_nav_description' => 'Display Promotions Page In Admin Rewards Nav',
+    'enable_reporting' => 'Enable Reporting in Leaderboard',
+    'reporting_nav_description' => 'Display Reporting Page In Rewards Nav',
+    'enable_tier_memberships' => 'Enable Tier Memberships in Leaderboard',
+    'tiers_nav_description' => 'Display Tiers Memberships In Leaderboard Nav',
+    'allow_promo_points' => 'Allow Promo Coupons To Award Loyalty Points',
+    'promo_points_description' => 'Display Loyalty Points Option In Promotions Manager',
+
+    // Points Settings
+    'rename_points_label' => 'Rename "Points" to another word.',
+    'rename_points_description' => 'Example: Use "Agency Bucks" instead of "Points" - you\'ve just earned 100 Agency Bucks.',
+    'points_value_label' => 'How Many Points = 1 Dollar.',
+    'points_value_description' => 'What is the point value of 1 Dollar. IE: 1 dollar = 1 point or 1 dollar = 100 points<br/> Used for converting transactions',
+
+    // Language and Template
+    'select_language_label' => 'Select Language For Leaderboard',
+    'select_one' => 'Select one',
+    'english' => 'English',
+    'spanish' => 'Spanish (Coming Soon)',
+    'language_description' => 'This will set the language for the Rewards Leadboard Dashboard',
+    'select_template_label' => 'Select Reward Template Layout',
+    'template_description' => 'View Reward Templates',
+
+    // Voucher Background
+    'change_voucher_bg' => 'Change Voucher Background',
+    'get_template_link' => 'Get Background Template Here.',
+
+    // Buttons
+    'update_settings' => 'Update Settings',
+    'updating_settings' => 'Updating Settings...',
+
+    'reload_cv' => 'Reload Custom Values',
+    'upload_collection' => 'Update Collection',
+    'app_name' => 'GHL SMART SCRIPT',
+
+    // Main Navigation
+    'dashboard' => 'Dashboard',
+    'smart_apps' => 'SMART Apps',
+    'smart_rewards' => 'SMART Rewards',
+    'cv_updater' => 'CV Updater',
+    'crypto' => 'Crypto',
+    'blog' => 'Blog',
+
+    // Account Menu
+    'account_settings' => 'Account Settings',
+    'profile' => 'Profile',
+    'api_settings' => 'API Settings',
+    'billing_portal' => 'Billing Portal',
+    'all_locations' => 'All Locations',
+    'logout' => 'Logout',
 
 
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
-    'collection_name' => 'Collection',
     'collection_name' => 'Collection',
 
 ];

@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
 Route::post('Webhook-CustomValues.php', [CustomValuesController::class, 'webhookCustomValues']);
 
 Route::get('/', function () {
@@ -45,9 +46,9 @@ Route::get('/2', function () {
     if (auth()->check()) {
         $user = LoginUser();
         $type = $user->role;
-        if($type == Account::ADMIN || $type == Account::SUBADMIN){
+        if ($type == Account::ADMIN || $type == Account::SUBADMIN) {
             return redirect()->route('admin.accounts');
-        }else{
+        } else {
             return redirect()->route('frontend.dashboard');
         }
     }
@@ -155,9 +156,8 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
         Route::post('update-collection-customvalues', [CustomValueController::class, 'updateCollectionCustomValues'])->name('updatecollectioncustomvalues');
         Route::post('updatecollection/{id}', [CustomValueController::class, 'updatecollection'])->name('updatecollection');
 
-         Route::get('/cv-smartreward/{id}', [CVSmartRewardController::class, 'index'])->name('cv_smartreward');
-          Route::post('custom-values-update/{id}', [CVSmartRewardController::class, 'update'])->name('custom_values_update');
-
+        Route::get('/cv-smartreward/{id}', [CVSmartRewardController::class, 'index'])->name('cv_smartreward');
+        Route::post('custom-values-update/{id}', [CVSmartRewardController::class, 'update'])->name('custom_values_update');
     });
 });
 

@@ -6,10 +6,10 @@ $c = 0;
 <table class="table table-hover cvTableImport">
     <thead>
         <tr>
-            <th>Add</th>
-            <th>Name</th>
-            <th>Custom Field To Map
-                <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="Select your custom field to map to your custom value."></i>
+            <th>{{ __('messages.add') }}</th>
+            <th>{{ __('messages.name') }}</th>
+            <th>{{ __('messages.custom_field_to_map') }}
+                <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="{{ __('messages.custom_field_tooltip') }}"></i>
             </th>
             <th></th>
             <th></th>
@@ -71,7 +71,7 @@ $c = 0;
         return strcmp($a->name, $b->name);
         });
 
-        $fields .= "<option value='Add Stamps'>Add Stapms</option>";
+        $fields .= "<option value='Add Stamps'>".__('messages.add_stamps')."</option>";
         foreach ($cf as $cfItem) {
         // Safety check in case of unexpected structure
         if (!is_object($cfItem) || !isset($cfItem->name)) {
@@ -97,8 +97,8 @@ $c = 0;
 
             <td colspan="2">
                 <div style="margin-top:10px;">
-                    <label for="customField_{{ $i }}">Custom Field Form Data
-                        <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="This is the form field from your location that will update the custom value when updating via webhook."></i>
+                    <label for="customField_{{ $i }}">{{ __('messages.custom_field_form_data') }}
+                        <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="{{ __('messages.custom_field_form_tooltip') }}"></i>
                     </label>
                     <select style="margin-left:15px;" name="cv[{{ $i }}][customField]" id="customField_{{ $i }}"
                         data-index="{{ $i }}"
@@ -110,7 +110,7 @@ $c = 0;
             </td>
 
             <td>
-                <a class="btn btn-primary" onclick="showAdv('{{ $cvValue->id }}');">Advanced</a>
+                <a class="btn btn-primary" onclick="showAdv('{{ $cvValue->id }}');">{{ __('messages.advanced') }}</a>
             </td>
         </tr>
 
@@ -120,14 +120,14 @@ $c = 0;
 
             <td style="padding-top:25px;">
                 <div class="form-group">
-                    <label for="tooltip_{{ $i }}">Tool Tip</label>
+                    <label for="tooltip_{{ $i }}">{{ __('messages.tooltip') }}</label>
                     <textarea rows="5" style="width:100%;" name="cv[{{ $i }}][tooltip]" id="tooltip_{{ $i }}"
                         data-index="{{ $i }}"
                         onchange="autoCheck(this);"
                         onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">{{ $tooltip }}</textarea>
                 </div>
                 <div class="form-group">
-                    <label for="defaultv_{{ $i }}">Default Value</label>
+                    <label for="defaultv_{{ $i }}">{{ __('messages.default_value') }}</label>
                     <textarea rows="5" style="width:100%;" name="cv[{{ $i }}][defaultv]" id="defaultv_{{ $i }}"
                         data-index="{{ $i }}"
                         onchange="autoCheck(this);"
@@ -137,40 +137,40 @@ $c = 0;
 
             <td style="text-align:center; padding-top:25px;">
                 <div>
-                    <label for="fieldtype_{{ $i }}">Field Type
-                        <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="Field type allows you to set the data type of the field."></i>
+                    <label for="fieldtype_{{ $i }}">{{ __('messages.field_type') }}
+                        <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="{{ __('messages.field_type_tooltip') }}"></i>
                     </label>
                     <select style="width:100%;" name="cv[{{ $i }}][fieldType]" id="fieldType_{{ $i }}"
                         data-index="{{ $i }}"
                         onchange="autoCheck(this);"
                         onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();">
-                        <option value="text" {{ $ftText }}>Text</option>
-                        <option value="boolean" {{ $ftBoolean }}>YES/NO</option>
-                        <option value="paragraph" {{ $ftPar }}>Paragraph</option>
-                        <option value="image" {{ $ftImage }}>Image</option>
-                        <option value="logo" {{ $ftLogo }}>Logo</option>
+                        <option value="text" {{ $ftText }}>{{ __('messages.text') }}</option>
+                        <option value="boolean" {{ $ftBoolean }}>{{ __('messages.yes_no') }}</option>
+                        <option value="paragraph" {{ $ftPar }}>{{ __('messages.paragraph') }}</option>
+                        <option value="image" {{ $ftImage }}>{{ __('messages.image') }}</option>
+                        <option value="logo" {{ $ftLogo }}>{{ __('messages.logo') }}</option>
                         @if (session('role') === 'Admin')
-                        <option value="revLogo" {{ $ftRevLogo }}>Review Logo</option>
+                        <option value="revLogo" {{ $ftRevLogo }}>{{ __('messages.review_logo') }}</option>
                         @endif
                     </select><br />
-                    <label for="readOnly_{{ $i }}">Read Only</label>
+                    <label for="readOnly_{{ $i }}">{{ __('messages.read_only') }}</label>
                     <input type="checkbox" style="margin:15px 0 0 15px;" value="yes" name="cv[{{ $i }}][readonly]" {{ $readonly }}><br />
-                    <label for="wysiwyg_{{ $i }}">WYSIWYG</label>
+                    <label for="wysiwyg_{{ $i }}">{{ __('messages.wysiwyg') }}</label>
                     <input type="checkbox" style="margin:5px 0 0 15px;" value="yes" name="cv[{{ $i }}][wysiwyg]" {{ $wysiwyg }}>
-                    <br /><span class="small">WYSIWYG on Paragraphs Only</span>
+                    <br /><span class="small">{{ __('messages.wysiwyg_note') }}</span>
                     <hr style="margin:5px auto;">
-                    <label for="sort_order_{{ $i }}">Display Order</label>
+                    <label for="sort_order_{{ $i }}">{{ __('messages.display_order') }}</label>
                     <input type="text" name="cv[{{ $i }}][sort_order]" size="4" value="{{ $sort }}"
                         data-index="{{ $i }}"
                         onchange="autoCheck(this);"
                         onkeyup="this.onchange();" onpaste="this.onchange();" oninput="this.onchange();" />
-                    <br /><small>Used when using the Power Tools Custom Values Updater Form</small>
+                    <br /><small>{{ __('messages.display_order_note') }}</small>
                 </div>
             </td>
 
             <td colspan="2" style="padding-top:25px;">
-                <label for="resource_{{ $i }}">Resources
-                    <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="Provide your end user with additional resource links, templates, or downloads"></i>
+                <label for="resource_{{ $i }}">{{ __('messages.resources') }}
+                    <i class="bi bi-question-circle-fill" data-toggle="tooltip" title="{{ __('messages.resources_tooltip') }}"></i>
                 </label>
                 <textarea style="width:100%;" rows="5" name="cv[{{ $i }}][resource]" id="resource_{{ $i }}"
                     data-index="{{ $i }}"
