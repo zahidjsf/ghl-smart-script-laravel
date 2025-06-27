@@ -12,6 +12,7 @@ use App\Http\Controllers\FrontPanel\SmartRewardController;
 use App\Http\Controllers\AdminPanel\Auth\CustomAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CRMConnectionController;
+use App\Http\Controllers\FrontPanel\AutoAuthController;
 use App\Http\Controllers\FrontPanel\CustomValueController;
 use App\Http\Controllers\FrontPanel\CVSmartRewardController;
 use App\Http\Controllers\Webhook\CustomValuesController;
@@ -165,3 +166,6 @@ Route::middleware(['auth', 'member'])->name('frontend.')->group(function () {
 Route::prefix('authorization')->name('crm.')->group(function () {
     Route::get('/crm/oauth/callback', [CRMConnectionController::class, 'crmCallback'])->name('oauth_callback');
 });
+Route::get('check/auth', [AutoAuthController::class, 'connect'])->name('auth.check');
+Route::get('check/auth/error', [AutoAuthController::class, 'authError'])->name('error');
+Route::get('checking/auth', [AutoAuthController::class, 'authChecking'])->name('admin.auth.checking');
