@@ -50,7 +50,8 @@
                         Swal.close();
                         // localStorage.setItem('token-id', data.token_id);
                         // toastr.success("Location connected successfully!");
-                        location.href = data.route + "?v=" + new Date().getTime();
+                        location.href = data.route;
+                        // location.href = data.route + "?v=" + new Date().getTime();
                     } else {
                         Swal.fire({
                             title: "Unable to auth user"
