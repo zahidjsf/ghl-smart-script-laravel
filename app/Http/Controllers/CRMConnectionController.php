@@ -4,16 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Helper\CRM;
 use App\Models\Account;
+use App\Models\CrmToken;
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use stdClass;
 
 class CRMConnectionController extends Controller
 {
     public function crmCallback(Request $request)
     {
-        \Artisan::call('optimize:clear');
-        \Artisan::call('config:clear');
-        \Artisan::call('cache:clear');
+        Artisan::call('optimize:clear');
+        Artisan::call('config:clear');
+        Artisan::call('cache:clear');
 
         $code = $request->code ?? null;
         if ($code) {
@@ -35,79 +41,93 @@ class CRMConnectionController extends Controller
         }
     }
 
-    protected const VIEW = 'autoauth';
-
-    public function authChecking(Request $req)
+    private function evp_bytes_to_key($password, $salt)
     {
-        $location = $req->query('location');
-        $token = $req->query('token');
+        $key = '';
+        $iv = '';
+        $derived_bytes = '';
+        $previous = '';
 
-        dd($location);
-
-        if ($req->ajax()) {
-            if ($req->has('location') && $req->has('token')) {
-                $location = $req->location;
-                $with     = 'token';
-                $user     = Account::with($with)->where('location_id', $req->location)->first();
-                $isNew    = false;
-                if (! $user) {
-                    $user              = new Account();
-                    $user->name        = 'Location User';
-                    $user->email       = $location . '@autoauth.net';
-                    $user->password    = bcrypt('autoauth_' . $location);
-                    $user->location_id = $location;
-                    $user->ghl_api_key = '-';
-                    $isNew             = true;
-                    $user->save();
-                }
-                $user->ghl_api_key = $req->token;
-                if (!$isNew) {
-                    $user->save();
-                }
-
-                $res                = new \stdClass;
-                $res->user_id       = $user->id;
-                $res->location_id   = $user->location_id ?? null;
-                $res->is_crm        = false;
-                $res->token         = $user->ghl_api_key;
-                $token              = $user->{$with} ?? null;
-                $res->crm_connected = false;
-
-                if ($token) {
-                    // request()->code = $token;
-                    list($tokenx, $token) = CRM::go_and_get_token($token->refresh_token, 'refresh', $user->id, $token);
-                    $res->crm_connected   = $tokenx && $token;
-                }
-                if (! $res->crm_connected) {
-                    $res->crm_connected = CRM::ConnectOauth($req->location, $res->token, false, $user->id);
-                }
-                if ($res->crm_connected) {
-                    if (Auth::check()) {
-                        Auth::logout();
-                        sleep(1);
-                        //return response()->json(['logout user']);
-                    }
-                    Auth::login($user);
-                }
-
-                $res->is_crm   = $res->crm_connected;
-                $res->token_id = encrypt($res->user_id);
-                $res->route    = route('location.home');
-
-                return response()->json($res);
-            }
+        // Concatenate MD5 results until we generate enough key material (32 bytes key + 16 bytes IV = 48 bytes)
+        while (strlen($derived_bytes) < 48) {
+            $previous = md5($previous . $password . $salt, true);
+            $derived_bytes .= $previous;
         }
-        return response()->json(['status' => 'invalid request']);
-    }
 
-    public function connect()
+        // Split the derived bytes into the key (first 32 bytes) and IV (next 16 bytes)
+        $key = substr($derived_bytes, 0, 32);
+        $iv = substr($derived_bytes, 32, 16);
+
+        return [
+            $key,
+            $iv
+        ];
+    }
+    public function decryptSSO(Request $request)
     {
-        return view(self::VIEW . '.connect');
-    }
+        try {
+            $ssoKey = env('SSO_KEY', null);
+            if (!$ssoKey) {
+                return response()->json(['status' => false, 'message' => 'SSO key is not configured.']);
+            }
+            $ciphertext = base64_decode($request->ssoToken);
 
-    public function authError()
-    {
-        return view(self::VIEW . '.error');
-    }
+            if (substr($ciphertext, 0, 8) !== "Salted__") {
+                return response()->json(['status' => false]);
+            }
+            $salt = substr($ciphertext, 8, 8);
+            $ciphertext = substr($ciphertext, 16);
+            list($key, $iv) = self::evp_bytes_to_key($ssoKey, $salt);
+            $decrypted = openssl_decrypt($ciphertext, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
 
+            if ($decrypted === false) {
+                return response()->json(['status' => false]);
+            } else {
+
+                $decrypted_data = json_decode($decrypted, true);
+                \Log::info($decrypted_data);
+
+                $comapnyId = $decrypted_data['companyId'];
+
+                $userId = CrmToken::where('companyId', $comapnyId)->value('a_id');
+ 
+                if ($userId) {
+                    $user = Account::where('id', $userId)->first();
+
+
+                    if ($user) {
+                        Auth::login($user);
+                    }
+
+                    $res = new stdClass;
+                    $res->is_crm = true;
+
+                    if (Auth::check()) {
+                        return response()->json(['status' => true, 'user' => Auth::user()]);
+                    }
+                    return response()->json(['status' => false, 'message' => 'Auth session initialization failed.']);
+
+                    // $res->route = route('frontend.dashboard');
+                    // return response()->json($res);
+                }
+
+                $decrypted_data = json_decode($decrypted, true);
+                $location_id = isset($decrypted_data['activeLocation']) ? $decrypted_data['activeLocation'] : null;
+                $user = User::where('location_id', $location_id)
+                    ->first();
+
+                if (!$user) {
+                    return response()->json(['status' => true, 'message' => "Location Does Not exist in the software Try uninstall and install the app again."]);
+                }
+                Auth::login($user);
+                if (Auth::check()) {
+                    return response()->json(['status' => true, 'user' => Auth::user()]);
+                }
+                return response()->json(['status' => false, 'message' => 'Auth session initialization failed.']);
+            }
+        } catch (Exception $e) {
+            Log::error('SSO Decryption Error: ' . $e->getMessage());
+            return response()->json(['status' => false, 'message' => 'An error occurred while processing your request.']);
+        }
+    }
 }

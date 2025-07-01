@@ -169,3 +169,11 @@ Route::prefix('authorization')->name('crm.')->group(function () {
 Route::get('check/auth', [AutoAuthController::class, 'connect'])->name('auth.check');
 Route::get('check/auth/error', [AutoAuthController::class, 'authError'])->name('error');
 Route::get('checking/auth', [AutoAuthController::class, 'authChecking'])->name('admin.auth.checking');
+
+Route::get('/custom-page',
+    function () {
+        return view('crm-custom-page');
+    }
+);
+
+Route::post('decrypt-sso', [CRMConnectionController::class, 'decryptSSO'])->withoutMiddleware([\App\Http\Middleware\VerifyCsrfToken::class]);
