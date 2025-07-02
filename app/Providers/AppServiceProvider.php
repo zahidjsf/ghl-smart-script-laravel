@@ -17,6 +17,8 @@ use App\Repositories\Interfaces\FrontPanel\CustomValueRepositoryInterface;
 use App\Repositories\Interfaces\FrontPanel\CVSmartRewardRepositoryInterface;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Request;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -40,6 +42,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (Request::header('sec-fetch-dest') === 'iframe' || Request::header('Referer')) {
+            URL::forceScheme('https');
+        }
         if (Auth::check()) {
             App::setLocale(Auth::user()->locale);
         }

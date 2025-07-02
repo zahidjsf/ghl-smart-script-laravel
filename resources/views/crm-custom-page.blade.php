@@ -144,8 +144,8 @@
                         })
                     });
                     const data = await res.json();
-                    if (data.status) {
-                        window.location.href = "/";
+                    if (data.status==true) {
+                        window.location.href = "https://687e-39-37-143-62.ngrok-free.app/login";
                     } else {
                         $('#app').show();
                         alert(data.message || 'Token verification failed.');

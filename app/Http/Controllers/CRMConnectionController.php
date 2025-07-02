@@ -5,13 +5,11 @@ namespace App\Http\Controllers;
 use App\Helper\CRM;
 use App\Models\Account;
 use App\Models\CrmToken;
-use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use stdClass;
 
 class CRMConnectionController extends Controller
 {
@@ -90,44 +88,22 @@ class CRMConnectionController extends Controller
                 $comapnyId = $decrypted_data['companyId'];
 
                 $userId = CrmToken::where('companyId', $comapnyId)->value('a_id');
- 
                 if ($userId) {
                     $user = Account::where('id', $userId)->first();
-
-
                     if ($user) {
                         Auth::login($user);
                     }
-
-                    $res = new stdClass;
-                    $res->is_crm = true;
-
                     if (Auth::check()) {
                         return response()->json(['status' => true, 'user' => Auth::user()]);
                     }
                     return response()->json(['status' => false, 'message' => 'Auth session initialization failed.']);
-
-                    // $res->route = route('frontend.dashboard');
-                    // return response()->json($res);
                 }
-
-                $decrypted_data = json_decode($decrypted, true);
-                $location_id = isset($decrypted_data['activeLocation']) ? $decrypted_data['activeLocation'] : null;
-                $user = User::where('location_id', $location_id)
-                    ->first();
-
-                if (!$user) {
-                    return response()->json(['status' => true, 'message' => "Location Does Not exist in the software Try uninstall and install the app again."]);
-                }
-                Auth::login($user);
-                if (Auth::check()) {
-                    return response()->json(['status' => true, 'user' => Auth::user()]);
-                }
-                return response()->json(['status' => false, 'message' => 'Auth session initialization failed.']);
             }
         } catch (Exception $e) {
             Log::error('SSO Decryption Error: ' . $e->getMessage());
             return response()->json(['status' => false, 'message' => 'An error occurred while processing your request.']);
         }
     }
+
+
 }
