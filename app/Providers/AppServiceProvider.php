@@ -42,9 +42,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (Request::header('sec-fetch-dest') === 'iframe' || Request::header('Referer')) {
-            URL::forceScheme('https');
-        }
+        // if (Request::header('sec-fetch-dest') === 'iframe' || Request::header('Referer')) {
+        //     URL::forceScheme('https');
+        // }
         if (Auth::check()) {
             App::setLocale(Auth::user()->locale);
         }
