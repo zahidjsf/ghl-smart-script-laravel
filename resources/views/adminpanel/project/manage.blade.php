@@ -40,7 +40,7 @@
                                     <th>ID</th>
                                     <th>Project</th>
                                     <th>Description</th>
-                                    <th>PArent</th>
+                                    <th>Parent</th>
                                     <th>In Membershipt ?</th>
                                     <th>Actions</th>
                                 </tr>

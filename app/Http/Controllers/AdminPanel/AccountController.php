@@ -102,7 +102,7 @@ class AccountController extends Controller
 
     public function licenseOperation($projId, $accID, $type)
     {
-        $view = $this->accountService->handleLicenseOperation($projId, $accID);
+        $view = $this->accountService->handleLicenseOperation($projId, $accID, $type);
         return response()->json(['view' => $view]);
     }
 

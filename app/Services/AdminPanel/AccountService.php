@@ -38,7 +38,13 @@ class AccountService
             ->addColumn('actions', function ($account) {
                 $html = ' <a href="' . route('admin.accountedit', $account->id) . '" class="btn btn-xs btn-primary">Edit</a> ';
                 $html .= ' <a href="../home.php?licensekey=' . $account->licensekey . '" class="btn btn-xs btn-primary" target="_incognito">Manage D4Y</a>';
-                $html .= ' <a href="' . $account->agency_url . '" class="btn btn-xs btn-primary" target="_blank">GHL Login</a>';
+        $html .= ' <a href="' .
+            (isset($account->agency_url) && !empty($account->agency_url)
+                ? (preg_match('/^https?:\/\//', $account->agency_url)
+                    ? $account->agency_url
+                    : 'https://' . $account->agency_url)
+                : 'https://app.gohighlevel.com/') .
+            '" class="btn btn-xs btn-primary" target="_blank">GHL Login</a>';
                 $html .= ' <a href="' . route('admin.accountdelete', $account->id) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you want to delete this account?\')">Delete</a> ';
                 return $html;
             })
@@ -85,7 +91,7 @@ class AccountService
         ];
     }
 
-    public function handleLicenseOperation($projId, $accID)
+    public function handleLicenseOperation($projId, $accID, $type)
     {
         $projLicense = $this->accountRepository->getProjectLicense($accID, $projId);
         $systemProject = $this->accountRepository->getSystemProjects()->find($projId);
@@ -95,7 +101,9 @@ class AccountService
             'projLicense' => $projLicense,
             'systemProject' => $systemProject,
             'numLicenses' => $numLicenses,
-            'accID' => $accID
+            'accID' => $accID,
+            'type' => $type,
+            'projId' => $projId
         ])->render();
     }
 

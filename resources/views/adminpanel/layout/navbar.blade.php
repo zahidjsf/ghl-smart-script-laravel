@@ -25,7 +25,7 @@
                                 </div> --}}
                                 <div class="u-text">
                                     <h4>{{ LoginUser()->fName }}</h4>
-                                    <p class="text-muted">{{ LoginUser(true)->email }}</p>
+                                    <p class="text-muted">{{ LoginUser(false)->email }}</p>
                                     {{-- <a href="profile.html"
                                         class="btn btn-xs btn-secondary btn-sm">View Profile</a> --}}
                                 </div>

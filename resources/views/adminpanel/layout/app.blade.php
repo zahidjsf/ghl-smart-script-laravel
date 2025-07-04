@@ -78,7 +78,7 @@
     {{-- <script src="{{asset('adminpanel/assets/js/plugin/chart.js/chart.min.js')}}"></script> --}}
 
     <!-- jQuery Sparkline -->
-    {{-- <script src="{{asset('adminpanel/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js')}}"></script> --}}
+     <script src="{{asset('adminpanel/assets/js/plugin/jquery.sparkline/jquery.sparkline.min.js')}}"></script>
 
     <!-- Chart Circle -->
     {{-- <script src="{{asset('adminpanel/assets/js/plugin/chart-circle/circles.min.js')}}"></script> --}}

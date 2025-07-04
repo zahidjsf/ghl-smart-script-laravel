@@ -1,16 +1,17 @@
 <script>
       $(function() {
-        $('#api-history-table').DataTable({
+        $('#Yajra-dataTable').DataTable({
             processing: true,
             serverSide: true,
-            ajax: '{{ route("frontend.get-apihistory") }}',
+            ajax: '{{ route("admin.get-projects") }}',
             columns: [
                 { data: 'id', name: 'id' },
-                { data: 'loc_id', name: 'loc_id' },
-                { data: 'status', name: 'status' },
-                { data: 'date', name: 'date' },
-                { data: 'type', name: 'type' },
-                { data: 'notes', name: 'notes' },
+                { data: 'name', name: 'name' },
+                { data: 'description', name: 'description' },
+                { data: 'url', name: 'url' },
+                { data: 'inMembership', name: 'inMembership' },
+                { data: 'license_url', name: 'license_url' },
+                { data: 'cv_collections', name: 'cv_collections' },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ],
             dom: 'Bfrtip',
