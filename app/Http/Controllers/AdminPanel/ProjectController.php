@@ -30,12 +30,12 @@ class ProjectController extends Controller
         $projects = $this->projectService->getAllProjectsForAccount($account);
 
         return DataTables::of($projects)
-            ->addColumn('action', function ($project) {
+            ->addColumn('actions', function ($project) {
                 $html = ' <a href="' . route('admin.projectedit', $project->id) . '" class="btn btn-xs btn-primary">Edit</a> ';
                 $html .= ' <a href="' . route('admin.projectdelete', $project->id) . '" class="btn btn-xs btn-danger" onclick="return confirm(\'Are you sure you want to delete this project?\')">Delete</a> ';
                 return $html;
             })
-            ->rawColumns(['action'])
+            ->rawColumns(['actions'])
             ->make(true);
     }
 

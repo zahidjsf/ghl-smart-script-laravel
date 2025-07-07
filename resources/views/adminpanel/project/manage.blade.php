@@ -41,7 +41,7 @@
                                     <th>Project</th>
                                     <th>Description</th>
                                     <th>Parent</th>
-                                    <th>In Membershipt ?</th>
+                                    <th>In Membership ?</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>

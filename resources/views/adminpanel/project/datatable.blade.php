@@ -8,10 +8,8 @@
                 { data: 'id', name: 'id' },
                 { data: 'name', name: 'name' },
                 { data: 'description', name: 'description' },
-                { data: 'url', name: 'url' },
+                { data: 'a_id', name: 'a_id' },
                 { data: 'inMembership', name: 'inMembership' },
-                { data: 'license_url', name: 'license_url' },
-                { data: 'cv_collections', name: 'cv_collections' },
                 { data: 'actions', name: 'actions', orderable: false, searchable: false }
             ],
             dom: 'Bfrtip',
