@@ -1,0 +1,13 @@
+{
+    "name": "RewardAndPromotions",
+    "alias": "rewardandpromotions",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\RewardAndPromotions\\Providers\\RewardAndPromotionsServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
