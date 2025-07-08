@@ -14,7 +14,7 @@ class RewardAndPromotionsController extends Controller
      */
     public function index()
     {
-        return view('rewardandpromotions::index');
+        return view('rewardandpromotions::dashboard');
     }
 
     /**

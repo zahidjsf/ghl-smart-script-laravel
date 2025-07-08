@@ -9,7 +9,9 @@
     ],
     "extra": {
         "laravel": {
-            "providers": [],
+            "providers": [
+                "Modules\\RewardAndPromotions\\Providers\\RewardAndPromotionsServiceProvider"
+            ],
             "aliases": {
 
             }
@@ -17,7 +19,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Modules\\RewardAndPromotions\\": ""
+            "App\\": "app/",
+            "Modules\\": "Modules/"
         }
     }
 }
