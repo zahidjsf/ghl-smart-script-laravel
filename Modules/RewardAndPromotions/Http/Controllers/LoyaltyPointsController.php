@@ -54,28 +54,28 @@ class LoyaltyPointsController extends Controller
 
         return $locSet->pointsName ?? "Points";
     }
-protected function getLeaderBoardData($location, $search)
-{
-    $leaderBoard = [];
-    $where = "AND event != 'redeem' AND archive != 1";
+    protected function getLeaderBoardData($location, $search)
+    {
+        $leaderBoard = [];
+        $where = "AND event != 'redeem' AND archive != 1";
 
-    if (!empty($search)) {
-        $char = ["'", "\""];
-        $search = str_replace(["(", ")", "-", "+"], "", $search);
+        if (!empty($search)) {
+            $char = ["'", "\""];
+            $search = str_replace(["(", ")", "-", "+"], "", $search);
 
-        if (ctype_digit(str_replace([" ", "+", "-"], "", $search))) {
-            $name[0] = str_replace([" ", "+", "-"], "", $search);
-            $first_name = $name[0];
-        } else {
-            $name = explode(" ", $search);
-        }
+            if (ctype_digit(str_replace([" ", "+", "-"], "", $search))) {
+                $name[0] = str_replace([" ", "+", "-"], "", $search);
+                $first_name = $name[0];
+            } else {
+                $name = explode(" ", $search);
+            }
 
-        $first_name = !empty($name[0]) ? str_replace($char, "", (string) $name[0]) : "";
-        $last_name = !empty($name[1]) ? str_replace($char, "", (string) $name[1]) : str_replace($char, "", (string) $name[0]);
+            $first_name = !empty($name[0]) ? str_replace($char, "", (string) $name[0]) : "";
+            $last_name = !empty($name[1]) ? str_replace($char, "", (string) $name[1]) : str_replace($char, "", (string) $name[0]);
 
-        $where = " AND (first_name LIKE '%" . $first_name . "%' OR last_name LIKE '%" . $last_name . "%' OR c.cid = '" . $name[0] . "' OR c.phone LIKE '%" . $name[0] . "%') AND event != 'redeem' AND archive != 1";
+            $where = " AND (first_name LIKE '%" . $first_name . "%' OR last_name LIKE '%" . $last_name . "%' OR c.cid = '" . $name[0] . "' OR c.phone LIKE '%" . $name[0] . "%') AND event != 'redeem' AND archive != 1";
 
-        $results = DB::select("
+            $results = DB::select("
             SELECT
                 r.cid,
                 r.a_id,
@@ -91,8 +91,8 @@ protected function getLeaderBoardData($location, $search)
             GROUP BY r.cid, r.a_id, r.loc_id, c.first_name, c.last_name, c.email, c.phone
             ORDER BY totalPoints DESC
         ", [$location->loc_id]);
-    } else {
-        $results = DB::select("
+        } else {
+            $results = DB::select("
             SELECT
                 cid,
                 a_id,
@@ -103,71 +103,71 @@ protected function getLeaderBoardData($location, $search)
             GROUP BY cid, a_id, loc_id
             ORDER BY totalPoints DESC
         ", [$location->loc_id]);
-    }
-
-    // Process results
-    foreach ($results as $i => $row) {
-        if (empty($row->cid)) {
-            continue;
         }
 
-        $contact = $this->getRewardsContactDB($row->cid);
-        $pbalance = $this->getPointsBalance($row->cid);
+        // Process results
+        foreach ($results as $i => $row) {
+            if (empty($row->cid)) {
+                continue;
+            }
 
-        if ($contact) {
-            if (empty($contact->first_name)) {
-                $lookupContact = $this->lookupContactById($row->cid, $this->decryptAPI($location->apikey), $location->loc_id);
-                $contactData = json_decode($lookupContact, true);
+            $contact = $this->getRewardsContactDB($row->cid);
+            $pbalance = $this->getPointsBalance($row->cid);
 
-                if (!empty($contactData['contact']['firstName'])) {
-                    $firstName = $contactData['contact']['firstName'] ?? "";
-                    $lastName = $contactData['contact']['lastName'] ?? "";
-                    $email = $contactData['contact']['emailLowerCase'] ?? "";
-                    $phone = $contactData['contact']['phone'] ?? "";
+            if ($contact) {
+                if (empty($contact->first_name)) {
+                    $lookupContact = $this->lookupContactById($row->cid, $this->decryptAPI($location->apikey), $location->loc_id);
+                    $contactData = json_decode($lookupContact, true);
 
-                    $this->insertContactRewards($row->cid, $row->a_id, $row->loc_id, $firstName, $lastName, $email, $phone);
+                    if (!empty($contactData['contact']['firstName'])) {
+                        $firstName = $contactData['contact']['firstName'] ?? "";
+                        $lastName = $contactData['contact']['lastName'] ?? "";
+                        $email = $contactData['contact']['emailLowerCase'] ?? "";
+                        $phone = $contactData['contact']['phone'] ?? "";
+
+                        $this->insertContactRewards($row->cid, $row->a_id, $row->loc_id, $firstName, $lastName, $email, $phone);
+                    } else {
+                        $firstName = "REMOVED_FROM_CRM_DELETE";
+                        $lastName = "";
+                        $phone = $contact->phone ?? '';
+                        $email = $contact->email ?? '';
+                    }
                 } else {
-                    $firstName = "REMOVED_FROM_CRM_DELETE";
-                    $lastName = "";
+                    $firstName = $contact->first_name;
+                    $lastName = $contact->last_name;
                     $phone = $contact->phone ?? '';
                     $email = $contact->email ?? '';
                 }
             } else {
-                $firstName = $contact->first_name;
-                $lastName = $contact->last_name;
-                $phone = $contact->phone ?? '';
-                $email = $contact->email ?? '';
+                $lookupContact = $this->lookupContactById($row->cid, $this->decryptAPI($location->apikey), $location->loc_id);
+                $contactData = json_decode($lookupContact, true);
+
+                if (!empty($contactData['id']['rule'])) {
+                    continue;
+                }
+
+                $firstName = $contactData['contact']['firstName'] ?? "";
+                $lastName = $contactData['contact']['lastName'] ?? "";
+                $email = $contactData['contact']['emailLowerCase'] ?? "";
+                $phone = $contactData['contact']['phone'] ?? "";
+
+                $this->insertContactRewards($row->cid, $row->a_id, $row->loc_id, $firstName, $lastName, $email, $phone);
             }
-        } else {
-            $lookupContact = $this->lookupContactById($row->cid, $this->decryptAPI($location->apikey), $location->loc_id);
-            $contactData = json_decode($lookupContact, true);
 
-            if (!empty($contactData['id']['rule'])) {
-                continue;
-            }
-
-            $firstName = $contactData['contact']['firstName'] ?? "";
-            $lastName = $contactData['contact']['lastName'] ?? "";
-            $email = $contactData['contact']['emailLowerCase'] ?? "";
-            $phone = $contactData['contact']['phone'] ?? "";
-
-            $this->insertContactRewards($row->cid, $row->a_id, $row->loc_id, $firstName, $lastName, $email, $phone);
+            $leaderBoard[] = [
+                'pos' => $i + 1,
+                'id' => $row->cid,
+                'name' => $firstName . " " . $lastName,
+                'phone' => $phone,
+                'email' => $email,
+                'points' => number_format($pbalance['lifePoints']),
+                'available' => number_format($pbalance['curPoints']),
+                'location' => $location->loc_id,
+            ];
         }
 
-        $leaderBoard[] = [
-            'pos' => $i + 1,
-            'id' => $row->cid,
-            'name' => $firstName . " " . $lastName,
-            'phone' => $phone,
-            'email' => $email,
-            'points' => number_format($pbalance['lifePoints']),
-            'available' => number_format($pbalance['curPoints']),
-            'location' => $location->loc_id,
-        ];
+        return $leaderBoard;
     }
-
-    return $leaderBoard;
-}
 
     protected function paginateLeaderBoard($items, $perPage, $page)
     {
