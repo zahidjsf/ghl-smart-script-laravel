@@ -1,16 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Modules\RewardAndPromotions\Http\Controllers\LeaderboardController;
 use Modules\RewardAndPromotions\Http\Controllers\LoyaltyPointsController;
 
 Route::group(['as' => 'reward-promotions.', 'prefix' => 'reward-promotions'], function () {
-
-    Route::get('/points', [LoyaltyPointsController::class, 'index']);
+    Route::get('/referrals', [LeaderboardController::class, 'index'])->name('referrals');
+    Route::get('/contact-points', [LoyaltyPointsController::class, 'index'])->name('contact_points');
 });
 
-Route::get('/rewards/point-leaders/{location}', [LoyaltyPointsController::class, 'index'])
-    ->name('rewards.point-leaders');
-
-Route::get('/blowwfg', function () {
-    dd('ffff');
-});
+Route::get('/rewards/point-leaders/{location}', [LoyaltyPointsController::class, 'index'])->name('rewards.point-leaders');

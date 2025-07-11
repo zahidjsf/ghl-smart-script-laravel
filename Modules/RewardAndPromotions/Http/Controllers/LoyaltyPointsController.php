@@ -12,7 +12,7 @@ class LoyaltyPointsController extends Controller
 {
     public function index(Request $request)
     {
-        $locationId = 'bPF3PypFAd66WXJXUGeV';
+        $locationId = 'ZZHap8IaodEICUFX5ua2';
         // Validate location exists
         $location = Location::where('loc_id', $locationId)->firstOrFail();
 
@@ -76,33 +76,11 @@ class LoyaltyPointsController extends Controller
             $where = " AND (first_name LIKE '%" . $first_name . "%' OR last_name LIKE '%" . $last_name . "%' OR c.cid = '" . $name[0] . "' OR c.phone LIKE '%" . $name[0] . "%') AND event != 'redeem' AND archive != 1";
 
             $results = DB::select("
-            SELECT
-                r.cid,
-                r.a_id,
-                r.loc_id,
-                c.first_name,
-                c.last_name,
-                c.email,
-                c.phone,
-                SUM(r.points) as totalPoints
-            FROM LoyaltyRewards r
-            LEFT JOIN LoyaltyContacts c ON r.cid = c.cid
-            WHERE r.loc_id = ? " . $where . "
-            GROUP BY r.cid, r.a_id, r.loc_id, c.first_name, c.last_name, c.email, c.phone
-            ORDER BY totalPoints DESC
-        ", [$location->loc_id]);
+            SELECT r.cid,r.a_id,r.loc_id,c.first_name, c.last_name, c.email, c.phone, SUM(r.points) as totalPoints FROM LoyaltyRewards r
+            LEFT JOIN LoyaltyContacts c ON r.cid = c.cid WHERE r.loc_id = ? " . $where . " GROUP BY r.cid, r.a_id, r.loc_id, c.first_name, c.last_name, c.email, c.phone ORDER BY totalPoints DESC", [$location->loc_id]);
         } else {
             $results = DB::select("
-            SELECT
-                cid,
-                a_id,
-                loc_id,
-                SUM(points) as totalPoints
-            FROM LoyaltyRewards
-            WHERE loc_id = ? " . $where . "
-            GROUP BY cid, a_id, loc_id
-            ORDER BY totalPoints DESC
-        ", [$location->loc_id]);
+            SELECT cid, a_id, loc_id, SUM(points) as totalPoints FROM LoyaltyRewards WHERE loc_id = ? " . $where . " GROUP BY cid, a_id, loc_id ORDER BY totalPoints DESC", [$location->loc_id]);
         }
 
         // Process results
@@ -116,7 +94,7 @@ class LoyaltyPointsController extends Controller
 
             if ($contact) {
                 if (empty($contact->first_name)) {
-                    $lookupContact = $this->lookupContactById($row->cid, $this->decryptAPI($location->apikey), $location->loc_id);
+                    $lookupContact = $this->lookupContactById($row->cid, decryptAPI($location->apikey), $location->loc_id);
                     $contactData = json_decode($lookupContact, true);
 
                     if (!empty($contactData['contact']['firstName'])) {
@@ -139,7 +117,7 @@ class LoyaltyPointsController extends Controller
                     $email = $contact->email ?? '';
                 }
             } else {
-                $lookupContact = $this->lookupContactById($row->cid, $this->decryptAPI($location->apikey), $location->loc_id);
+                $lookupContact = $this->lookupContactById($row->cid, decryptAPI($location->apikey), $location->loc_id);
                 $contactData = json_decode($lookupContact, true);
 
                 if (!empty($contactData['id']['rule'])) {
@@ -154,7 +132,8 @@ class LoyaltyPointsController extends Controller
                 $this->insertContactRewards($row->cid, $row->a_id, $row->loc_id, $firstName, $lastName, $email, $phone);
             }
 
-            $leaderBoard[] = [
+            $leaderBoard[] =
+            [
                 'pos' => $i + 1,
                 'id' => $row->cid,
                 'name' => $firstName . " " . $lastName,
@@ -193,12 +172,6 @@ class LoyaltyPointsController extends Controller
     {
         // Implement your agency URL logic
         return DB::table('accounts')->where('id', $agencyId)->value('agency_url');
-    }
-
-    protected function decryptAPI($encryptedApiKey)
-    {
-        // Implement your decryption logic
-        return decrypt($encryptedApiKey);
     }
 
     protected function getRewardsContactDB($cid)

@@ -101,3 +101,23 @@ function LoginUser($onlyId = false){
     }
     return $user;
 }
+
+//Need to remove this 
+function decryptAPI($apikey){
+
+		// Store the cipher method
+		$ciphering = "AES-128-CTR";
+		// Non-NULL Initialization Vector for decryption
+		$decryption_iv = '1231231231234456';
+		$options = 0;
+		// Store the decryption key
+		$decryption_key = "GHLSmartReviews";
+		$tag = "";
+
+		// Use openssl_decrypt() function to decrypt the data
+		$decryption=openssl_decrypt ((string)$apikey, $ciphering,
+				$decryption_key, $options, $decryption_iv,$tag);
+
+		return $decryption;
+
+}
