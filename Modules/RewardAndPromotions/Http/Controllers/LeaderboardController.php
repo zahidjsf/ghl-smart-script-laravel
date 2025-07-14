@@ -2,6 +2,8 @@
 
 namespace Modules\RewardAndPromotions\Http\Controllers;
 
+use App\Helper\CRM;
+use App\Models\LoyaltyContactsReferred;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
@@ -23,7 +25,7 @@ class LeaderboardController extends Controller
         }
 
         // Get points name from location settings
-        $locSet = $this->getLocationSettings($locationId);
+        $locSet = getLocationSettings($locationId);
         $pointsName = $locSet['pointsName'] ?? "Points";
 
         // Process search if any
@@ -50,8 +52,7 @@ class LeaderboardController extends Controller
 
         // Process leaderboard data
         $leaderBoard = [];
-        $apiKey = $this->decryptAPI($location->apikey);
-        $parentURL = $this->getAgencyURL($location->a_id);
+        $parentURL = getAgencyURL($location->a_id);
 
         foreach ($leaderboardData as $index => $data) {
             $contact = null;
@@ -61,7 +62,8 @@ class LeaderboardController extends Controller
                 $name = $data->refName;
             } else {
                 if (!empty($data->referrer)) {
-                    $contact = $this->lookupContactById($data->referrer, $apiKey, $locationId);
+                    $contact = CRM::crmV2($location->a_id, 'contacts'.$data->referrer, 'get', '', false,$locationId);
+                    // $contact = $this->lookupContactById($data->referrer, $apiKey, $locationId);
                     $contact = json_decode($contact, true);
 
                     $firstName = $contact['contact']['firstName'] ?? '';
@@ -102,29 +104,14 @@ class LeaderboardController extends Controller
         ]);
     }
 
-    // Helper methods (implement these with your original logic)
-    private function getLocationSettings($locationId, $type = "2")
-    {
-        // Your original implementation here
-    }
-
-    private function decryptAPI($encryptedApiKey)
-    {
-        // Your original implementation here
-    }
-
-    private function getAgencyURL($agencyId)
-    {
-        // Your original implementation here
-    }
-
-    private function lookupContactById($contactId, $apiKey, $locationId)
-    {
-        // Your original implementation here
-    }
-
     private function updateContactReferred($referrerId, $name, $email, $phone)
     {
-        // Your original implementation here
+        $contact = LoyaltyContactsReferred::where('referrer', $referrerId)->first();
+        if($contact){
+             $contact->refName = $name;
+             $contact->refEmail = $email;
+             $contact->refPhone = $phone;
+             $contact->save();
+        }
     }
 }

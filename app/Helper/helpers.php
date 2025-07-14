@@ -1,8 +1,13 @@
 <?php
+
+use App\Models\Account;
 use App\Models\Setting;
 use App\Models\Article;
-use App\Models\ArticleContent;
+use Illuminate\Support\Str;
+use App\Models\Location;
+use App\Models\LocationSetting;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 if(!function_exists('onlyWhatsApp')){
     function onlyWhatsApp(){
@@ -102,7 +107,7 @@ function LoginUser($onlyId = false){
     return $user;
 }
 
-//Need to remove this 
+//Need to remove this
 function decryptAPI($apikey){
 
 		// Store the cipher method
@@ -120,4 +125,63 @@ function decryptAPI($apikey){
 
 		return $decryption;
 
+}
+
+function getLocationSettings($loc, $proj = "")
+{
+    if (strlen($loc) > 10) {
+        $loc = getLocIdFromGHLLocationId($loc, $proj);
+    }
+
+    $lid = DB::connection()->getPdo()->quote($loc);
+
+    $setting = LocationSetting::where('loc_id', $lid)
+                ->where('proj', $proj)
+                ->first();
+
+    return $setting ? json_decode($setting->settings, true) : false;
+}
+
+
+function getLocIdFromGHLLocationId($locationId, $proj_id = "")
+{
+    $query = Location::where('loc_id', $locationId);
+
+    if (!empty($proj_id)) {
+        $query->where('proj_id', $proj_id);
+    }
+
+    $location = $query->first();
+
+    return $location ? $location->id : false;
+}
+
+function getAgencyURL($aid = "")
+{
+    $account = getAccountByID(DB::connection()->getPdo()->quote($aid));
+
+    if (empty($account) || !isset($account['agency_url'])) {
+        return null;
+    }
+
+    $parentURL = Str::lower(trim($account['agency_url']));
+
+    // Remove http:// or https:// if present
+    $parentURL = preg_replace('#^https?://#', '', $parentURL);
+
+    // Ensure URL starts with https://
+    $parentURL = 'https://' . $parentURL;
+
+    // Parse URL to get clean format
+    $parsed = parse_url($parentURL);
+
+    $scheme = $parsed['scheme'] ?? 'https';
+    $host = $parsed['host'] ?? str_replace($scheme.'://', '', $parentURL);
+
+    return rtrim("{$scheme}://{$host}", '/');
+}
+
+function getAccountByID($aID)
+{
+    return Account::find($aID)?->toArray() ?? false;
 }
