@@ -38,7 +38,7 @@
                                 title="{{ __('messages.setup_video_title') }}" allowfullscreen></iframe>
                     </div>
 
-                    @if ($authUser->oauth == 0 && $authUser->account_type != 'starter')
+                    @if ($authUser->account_type != 'starter')
                         <div class="api-connect-section">
                             <h3>{{ __('messages.step') }} 1: {{ __('messages.connect_api') }}</h3>
                             <a class="btn btn-warning api-connect-btn" href="{{ $connecturl }}" target="_blank">
@@ -213,7 +213,7 @@
                 </div>
 
                 <!-- API V2 Section (Conditional) -->
-                @if (LoginUser()->oauth == 0 && LoginUser()->account_type != 'starter')
+                @if ( LoginUser()->account_type != 'starter')
                     <div class="feature-card api-card">
                         <h4>{{ __('messages.authorize_api_v2') }}</h4>
                         <div class="video-container">
