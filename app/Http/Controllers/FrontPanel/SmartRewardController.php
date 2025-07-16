@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Helper\CRM;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Hash;
 
 class SmartRewardController extends Controller
 {
@@ -218,11 +219,14 @@ class SmartRewardController extends Controller
         return redirect()->back()->with('success', 'Setting Saved Successfully');
     }
 
+
     public function locationUpdate(Request $request)
     {
-
         $location = Location::where('id', $request->loc_id)->first();
         $location->name = $request->name;
+        if ($request->filled('password')) {
+            $location->password = Hash::make($request->password);
+        }
         $location->save();
         return redirect()->back()->with('success', 'Location Updated Successfully');
     }
@@ -297,7 +301,8 @@ class SmartRewardController extends Controller
             'snapshot' => 'nullable|string',
             'add_promo_loc' => 'nullable|in:yes,no',
             'add_loyalty_loc' => 'nullable|in:yes,no',
-            'selectCurLoc' => 'nullable|string'
+            'selectCurLoc' => 'nullable|string',
+            'password' => 'nullable|string'
         ]);
 
         // Determine which location ID to use
@@ -319,7 +324,6 @@ class SmartRewardController extends Controller
         ) {
             return back()->with('error', 'This location has already been added');
         }
-
         // Get location details
         $locationDetails = $this->getLocationDetails($account, $locationId, $validated);
         // dd($locationDetails);
@@ -394,6 +398,9 @@ class SmartRewardController extends Controller
         $location->country = $details['country'] ?? '';
         $location->postalcode = $details['postalcode'] ?? '';
         $location->timezone = $details['timezone'] ?? '';
+        if ($details['password']) {
+            $location->password = Hash::make($details['password']);
+        }
         // $location->apikey = Crypt::encryptString($details['apikey']);
         $location->isML = $validated['ml'] ?? 'no';
         $location->snapshot = $validated['snapshot'] ?? null;

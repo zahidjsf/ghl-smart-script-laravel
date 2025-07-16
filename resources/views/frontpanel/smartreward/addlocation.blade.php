@@ -26,6 +26,11 @@
                         </select>
                     </div>
                     <br>
+                    <div class="form-group">
+                        <label for="password-{{ $location->id }}">Password</label>
+                        <input type="password" class="form-control" id="password-{{ $location->id }}" name="password" value="" placeholder="Enter password here">
+                    </div>
+                    <br>
                     @if ($projectId == 2)
                     <div class="form-group">
                         <label><input type="checkbox" name="add_promo_loc" value="yes" checked />{{ __('messages.auth_promo') }}</label>
