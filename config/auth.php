@@ -40,6 +40,11 @@ return [
             'driver' => 'session',
             'provider' => 'accounts',
         ],
+
+        'location' => [
+            'driver' => 'session',
+            'provider' => 'locations',
+        ],
     ],
 
     /*
@@ -64,11 +69,10 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\Account::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+       'locations' => [
+            'driver' => 'eloquent',
+            'model' => Modules\RewardAndPromotions\Entities\Location::class,
+        ],
     ],
 
     /*

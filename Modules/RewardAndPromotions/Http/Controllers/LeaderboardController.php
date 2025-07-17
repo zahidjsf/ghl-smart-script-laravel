@@ -6,13 +6,15 @@ use App\Helper\CRM;
 use App\Models\LoyaltyContactsReferred;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LeaderboardController extends Controller
 {
     public function index(Request $request)
     {
-        $locationId = 'ZZHap8IaodEICUFX5ua2';
+        $loc = Auth::guard('location')->user();
+        $locationId = $loc->loc_id;
         // Validate location ID
         if (empty($locationId) || $locationId == "{{location.id}}") {
             return response("Please provide a valid location ID", 400);

@@ -37,6 +37,7 @@ class RewardAndPromotionsServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/../Config/auth.php', 'auth');
         $this->app->register(\Modules\RewardAndPromotions\Providers\RouteServiceProvider::class);
     }
 
@@ -51,7 +52,8 @@ class RewardAndPromotionsServiceProvider extends ServiceProvider
             module_path($this->moduleName, 'Config/config.php') => config_path($this->moduleNameLower . '.php'),
         ], 'config');
         $this->mergeConfigFrom(
-            module_path($this->moduleName, 'Config/config.php'), $this->moduleNameLower
+            module_path($this->moduleName, 'Config/config.php'),
+            $this->moduleNameLower
         );
     }
 
