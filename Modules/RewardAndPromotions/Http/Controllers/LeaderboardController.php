@@ -15,6 +15,8 @@ class LeaderboardController extends Controller
     {
         $loc = Auth::guard('location')->user();
         $locationId = $loc->loc_id;
+        //Comment this below locationId
+        $locationId = 'ZZHap8IaodEICUFX5ua2';
         // Validate location ID
         if (empty($locationId) || $locationId == "{{location.id}}") {
             return response("Please provide a valid location ID", 400);

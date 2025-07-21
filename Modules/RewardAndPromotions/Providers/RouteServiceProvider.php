@@ -3,7 +3,9 @@
 namespace Modules\RewardAndPromotions\Providers;
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Modules\RewardAndPromotions\Http\Middleware\EnsureLocationAuthenticated;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,9 @@ class RouteServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
+        // Register custom middleware alias for 'location' guard
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('location', EnsureLocationAuthenticated::class);
     }
 
     /**
@@ -34,7 +39,6 @@ class RouteServiceProvider extends ServiceProvider
     public function map()
     {
         $this->mapApiRoutes();
-
         $this->mapWebRoutes();
     }
 

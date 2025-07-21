@@ -17,7 +17,7 @@ class LoginController extends Controller
 
     public function loginpost(Request $request)
     {
-        $location = EntitiesLocation::where('email', $request->email)->first();
+        $location = EntitiesLocation::where('email', $request->email)->where('proj_id', 2)->first();
 
         if ($location && Hash::check($request->password, $location->password)) {
             $loc = Auth::guard('location')->login($location);
@@ -26,5 +26,14 @@ class LoginController extends Controller
         }
 
         return back()->withErrors(['email' => 'Invalid credentials']);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('location')->logout();
+        // Optionally invalidate and regenerate the session
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return view('rewardandpromotions::auth.login');
     }
 }

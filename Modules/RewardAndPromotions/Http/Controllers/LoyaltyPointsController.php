@@ -7,16 +7,19 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\DB;
 use App\Models\Location;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
 
 class LoyaltyPointsController extends Controller
 {
     public function index(Request $request)
     {
+        $loc = Auth::guard('location')->user();
+        $locationId = $loc->loc_id;
+        
+        //Comment this below locationId
         $locationId = 'ZZHap8IaodEICUFX5ua2';
         // Validate location exists
         $location = Location::where('loc_id', $locationId)->firstOrFail();
-
-        // dd(1237);
 
         // Get points name from location settings
         $pointsName = $this->getPointsName($location);

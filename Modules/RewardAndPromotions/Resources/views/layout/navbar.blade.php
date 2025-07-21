@@ -12,6 +12,12 @@
                 <ul class="navbar-nav">
                     <!-- Dashboard Link -->
                     <li class="nav-item">
+                        <a class="nav-link text-white @yield('select_dashboard')" href="{{ route('reward-promotions.dashboard') }}" id="topnav-dashboard" role="button">
+                            <!-- <i class="bx bx-home-circle me-2"></i> -->
+                            <span key="t-dashboards">Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link text-white @yield('select_referrals')" href="{{ route('reward-promotions.referrals') }}" id="topnav-dashboard" role="button">
                             <!-- <i class="bx bx-home-circle me-2"></i> -->
                             <span key="t-dashboards">Referrals</span>
@@ -79,6 +85,11 @@
                         </div>
                     </li>
                 </ul>
+                <div class="ms-auto d-flex">
+                    <a href="{{ route('reward-promotions.logout') }}" class="d-flex align-items-center" style="color: white;">
+                        <i class="fa fa-sign-out-alt me-1"></i> Logout
+                    </a>
+                </div>
             </div>
         </nav>
     </div>
