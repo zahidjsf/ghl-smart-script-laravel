@@ -20,9 +20,8 @@ class LoginController extends Controller
         $location = EntitiesLocation::where('email', $request->email)->where('proj_id', 2)->first();
 
         if ($location && Hash::check($request->password, $location->password)) {
-            $loc = Auth::guard('location')->login($location);
-
-            return redirect()->intended('/reward-promotions/referrals');
+            Auth::guard('location')->login($location);
+            return redirect()->intended('/reward-promotions/dashboard');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials']);
